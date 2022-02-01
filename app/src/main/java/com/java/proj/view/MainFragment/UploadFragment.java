@@ -8,9 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.java.proj.view.AppBaseFragment;
 import com.java.proj.view.R;
 
-public class UploadFragment extends Fragment {
+public class UploadFragment extends AppBaseFragment {
 
     private Bundle bundle;
 

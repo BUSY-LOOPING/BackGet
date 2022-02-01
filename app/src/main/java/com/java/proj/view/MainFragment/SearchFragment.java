@@ -7,9 +7,10 @@ import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 
+import com.java.proj.view.AppBaseFragment;
 import com.java.proj.view.R;
 
-public class SearchFragment extends Fragment {
+public class SearchFragment extends AppBaseFragment {
     private Bundle bundle;
 
     public SearchFragment() {

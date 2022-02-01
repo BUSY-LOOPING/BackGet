@@ -16,6 +16,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.java.proj.view.AppBaseFragment;
 import com.java.proj.view.InnerFragment.InnerFragmentAdapter;
 import com.java.proj.view.InnerFragment.InnerFragmentList;
 import com.java.proj.view.InnerFragment.InnerFragmentPagerAdapter;
@@ -26,7 +27,7 @@ import com.java.proj.view.R;
  * Use the {@link PopularFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PopularFragment extends Fragment {
+public class PopularFragment extends AppBaseFragment {
 
     public PopularFragment() {
         // Required empty public constructor

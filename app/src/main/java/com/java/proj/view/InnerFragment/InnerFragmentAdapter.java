@@ -34,9 +34,6 @@ public class InnerFragmentAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         Bundle bundle = new Bundle();
-        if (position == 0) {
-            return InnerLikedFragment.newInstance(bundle);
-        }
         bundle.putInt(GeneralInnerFragment.KEY_LAYOUT, R.layout.fragment_inner_general);
         bundle.putString(GeneralInnerFragment.KEY_QUERY, InnerFragmentList.getFragment(position).getQuery());
         bundle.putString(GeneralInnerFragment.KEY_TOPIC_SLUG_OR_ID, InnerFragmentList.getFragment(position).getTopicIDorSlug());

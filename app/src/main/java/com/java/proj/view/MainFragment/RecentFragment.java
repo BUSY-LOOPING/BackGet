@@ -2,23 +2,20 @@ package com.java.proj.view.MainFragment;
 
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.java.proj.view.Activities.ImageDetailActivity;
-import com.java.proj.view.Utils.AppEvent;
-import com.java.proj.view.Utils.AppEventBus;
+import com.java.proj.view.AppBaseFragment;
 import com.java.proj.view.CallBacks.RecyclerViewListener;
 import com.java.proj.view.Events;
 import com.java.proj.view.MainActivity;
@@ -26,9 +23,10 @@ import com.java.proj.view.Models.GeneralModel;
 import com.java.proj.view.Models.ImageModel;
 import com.java.proj.view.R;
 import com.java.proj.view.RecyclerViewAdapters.RecyclerViewAdapter;
+import com.java.proj.view.Utils.AppEvent;
+import com.java.proj.view.Utils.AppEventBus;
 import com.java.proj.view.api.ApiUtilities;
 
-import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +35,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class RecentFragment extends Fragment implements RecyclerViewListener{
+public class RecentFragment extends AppBaseFragment implements RecyclerViewListener {
     private Bundle bundle;
     private Context context;
     private ArrayList<GeneralModel> list;
@@ -79,7 +77,7 @@ public class RecentFragment extends Fragment implements RecyclerViewListener{
 
     private void init(View view) {
         listener = this;
-        fragmentManager = ((MainActivity)context).getSupportFragmentManager();
+        fragmentManager = ((MainActivity) context).getSupportFragmentManager();
         recyclerView = view.findViewById(R.id.recyclerView);
         list = new ArrayList<>();
         loadingLayout = view.findViewById(R.id.loadingLayout);
@@ -161,11 +159,10 @@ public class RecentFragment extends Fragment implements RecyclerViewListener{
         viewList.add(container);
         viewList.add(view);
         appEvent.weakReferenceList = new WeakReference<>(new ArrayList<>(viewList));
-//        appEvent.extras.putString(ImageDetailActivity.LOADED_URL, list.get(position).getUriModel().getRegular());
-        appEvent.extras.putInt(ImageDetailActivity.LOADED_POS, position);
-        appEvent.extras.putSerializable(ImageDetailActivity.URL_LIST, list);
-        AppEventBus appEventBus = new AppEventBus(context);
-        appEventBus.post(appEvent);
+        appEvent.extras.putString(ImageDetailActivity.LOADED_URL, list.get(position).getUriModel().getRegular());
+        AppEventBus appEventBus = eventBus();
+        if (appEventBus != null)
+            appEventBus.post(appEvent);
     }
 
     @Override

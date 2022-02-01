@@ -2,36 +2,34 @@ package com.java.proj.view.InnerFragment;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
-
 import com.java.proj.view.Activities.ImageDetailActivity;
-import com.java.proj.view.Utils.AppEvent;
-import com.java.proj.view.Utils.AppEventBus;
+import com.java.proj.view.AppBaseFragment;
 import com.java.proj.view.CallBacks.GetDataCallBack;
 import com.java.proj.view.CallBacks.RecyclerViewListener;
 import com.java.proj.view.Events;
-import com.java.proj.view.Utils.GlobalAppController;
 import com.java.proj.view.Models.CollectionModel;
 import com.java.proj.view.Models.GeneralModel;
 import com.java.proj.view.R;
 import com.java.proj.view.RecyclerViewAdapters.RecyclerViewAdapter;
+import com.java.proj.view.Utils.AppEvent;
+import com.java.proj.view.Utils.AppEventBus;
 import com.java.proj.view.api.ApiUtilities;
 
-import java.io.Serializable;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GeneralInnerFragment extends Fragment implements RecyclerViewListener{
+public class GeneralInnerFragment extends AppBaseFragment implements RecyclerViewListener {
 
     public static final String KEY_QUERY = "general_fragment_query_retrofit";
     public static final String KEY_TOPIC_SLUG_OR_ID = "general_fragment_topic_slug_id_retrofit";
@@ -56,7 +54,7 @@ public class GeneralInnerFragment extends Fragment implements RecyclerViewListen
     }
 
     public static Fragment newInstance(Bundle bundle) {
-        GeneralInnerFragment fragment = new GeneralInnerFragment();
+        Fragment fragment = new GeneralInnerFragment();
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -155,11 +153,12 @@ public class GeneralInnerFragment extends Fragment implements RecyclerViewListen
         viewList.add(container);
         viewList.add(view);
         appEvent.weakReferenceList = new WeakReference<>(new ArrayList<>(viewList));
-        appEvent.extras.putSerializable(ImageDetailActivity.URL_LIST,(Serializable) list);
-        appEvent.extras.putInt(ImageDetailActivity.LOADED_POS, position);
-//        appEvent.extras.putString(ImageDetailActivity.LOADED_URL, list.get(position).getUriModel().getRegular());
-        AppEventBus appEventBus = new AppEventBus(context);
-        appEventBus.post(appEvent);
+//        appEvent.extras.putSerializable(ImageDetailActivity.URL_LIST,(Serializable) list);
+//        appEvent.extras.putInt(ImageDetailActivity.LOADED_POS, position);
+        appEvent.extras.putString(ImageDetailActivity.LOADED_URL, list.get(position).getUriModel().getRegular());
+        AppEventBus appEventBus = eventBus();
+        if (appEventBus != null)
+            appEventBus.post(appEvent);
     }
 
     @Override

@@ -1,9 +1,11 @@
 package com.java.proj.view.Utils;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -34,26 +36,15 @@ public class GlobalAppController {
     private final Context context;
     private final AppEventBus appEventBus;
     private final AppEventReceiver appEventReceiver;
-
-    //views
-    private LottieAnimationView lottieAnimationView;
-    private LinearLayout galleryBtn, customBtn;
-
-    private FragmentManager fragmentManager;
     private Service holderService;
-    //    private ViewPager2 mainViewPager;
-    private ViewPager mainViewPager1;
-    private TabLayout mainTabLayout;
-    //    private MainFragmentAdapter mainFragmentAdapter;
-    private MainFragmentPagerAdapter mainFragmentPagerAdapter;
+
 
     public GlobalAppController(Context context, Bundle savedInstanceState) {
         this.context = context;
         appEventBus = new AppEventBus(context);
         appEventReceiver = new AppEventReceiver(this);
         appEventBus.register(appEventReceiver);
-        init((MainActivity) context);
-        listeners();
+        init(context);
     }
 
     public void postToBus(AppEvent appEvent) {
@@ -62,30 +53,9 @@ public class GlobalAppController {
         }
     }
 
-    void init(MainActivity activity) {
-        fragmentManager = activity.getSupportFragmentManager();
-        lottieAnimationView = activity.findViewById(R.id.share_btn);
-        galleryBtn = activity.findViewById(R.id.galleryBtn);
-        customBtn = activity.findViewById(R.id.customBtn);
-//        mainViewPager = activity.findViewById(R.id.viewPagerMain);
-        mainViewPager1 = activity.findViewById(R.id.viewPagerMain);
-        mainTabLayout = activity.findViewById(R.id.tabLayoutMain);
-//        mainViewPager.setAdapter(createMainAdapter());
-        mainViewPager1.setAdapter(createMainPagerAdapter());
-        mainTabLayout.setupWithViewPager(mainViewPager1);
-//        {
-//            TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(mainTabLayout, mainViewPager,
-//                    (tab, position) -> tab.setText(FragmentList.getFragment(position).toString()));
-//            tabLayoutMediator.attach();
-//        }
-
-
+    void init(Context context) {
     }
 
-    private MainFragmentPagerAdapter createMainPagerAdapter() {
-        mainFragmentPagerAdapter = new MainFragmentPagerAdapter(((MainActivity) context).getSupportFragmentManager());
-        return mainFragmentPagerAdapter;
-    }
 
 
 //    private MainFragmentAdapter createMainAdapter() {
@@ -93,22 +63,9 @@ public class GlobalAppController {
 //        return mainFragmentAdapter;
 //    }
 
-    private void listeners() {
-        lottieAnimationView.setOnClickListener(v -> {
-            AppEvent appEvent = new AppEvent(AppEvent.AppEventCategory.BUTTON_CLICK.getValue(), Events.SHARE_BUTTON_PRESSED.ordinal(), 0, 0);
-            appEventBus.post(appEvent);
-        });
 
-        galleryBtn.setOnClickListener(v -> {
-            AppEvent appEvent = new AppEvent(AppEvent.AppEventCategory.BUTTON_CLICK.getValue(), Events.GALLERY_BUTTON_PRESSED.ordinal(), 0, 0);
-            Bundle bundle = new Bundle();
-            bundle.putInt(MainActivity.MAIN_CONTAINER, R.id.activity_main_container);
-            appEvent.extras = bundle;
-            appEventBus.post(appEvent);
-        });
-    }
 
-    private static class AppEventReceiver extends AppEventBus.Receiver<GlobalAppController> {
+    public static class AppEventReceiver extends AppEventBus.Receiver<GlobalAppController> {
         private static final int[] FILTER = new int[]{
                 0,
                 1,
@@ -146,7 +103,7 @@ public class GlobalAppController {
         Bundle extras = event.extras;
 
         if (Events.SHARE_BUTTON_PRESSED.ordinal() == eventInt) {
-            lottieAnimationView.playAnimation();
+//            lottieAnimationView.playAnimation();
         } else if (Events.IMAGE_CLICK.ordinal() == eventInt) {
 //            Bundle bundle = new Bundle();
 //            bundle.putString(ImageDetailActivity.LOADED_URL, extras.getString(ImageDetailActivity.LOADED_URL, ""));
@@ -165,27 +122,28 @@ public class GlobalAppController {
     }
 
     public void switchFragment(int id, Fragment fragment) {
-        if (!fragmentManager.isDestroyed()) {
-            fragmentManager
-                    .beginTransaction()
-                    .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_right, R.anim.slide_out_left)
-                    .addToBackStack("fragment")
-                    .replace(id, fragment)
-                    .commit();
-        }
+//        if (!fragmentManager.isDestroyed()) {
+//            fragmentManager
+//                    .beginTransaction()
+//                    .setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left, R.anim.slide_in_right, R.anim.slide_out_left)
+//                    .addToBackStack("fragment")
+//                    .replace(id, fragment)
+//                    .commit();
+//        }
     }
 
     public void switchContent(@NonNull Context context, Class<?> c, @NonNull Bundle bundle, @NonNull View container, @NonNull View view) {
-        String transitionNameImgContainer = context.getString(R.string.target_img_transition_parent);
-        String transitionNameImg = context.getString(R.string.target_img_transition);
-        MainActivity activity = (MainActivity) context;
-
-        Pair<View, String> pair1 = Pair.create(container, transitionNameImgContainer);
-        Pair<View, String> pair2 = Pair.create(view, transitionNameImg);
-        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pair1, pair2);
-        Intent intent = new Intent(context, c);
-        intent.putExtra(ImageDetailActivity.BUNDLE_VAL, bundle);
-        ActivityCompat.startActivity(context, intent, options.toBundle());
+//        String transitionNameImgContainer = context.getString(R.string.target_img_transition_parent);
+//        String transitionNameImg = context.getString(R.string.target_img_transition);
+//        MainActivity activity = (MainActivity) context;
+//
+//        Pair<View, String> pair1 = Pair.create(container, transitionNameImgContainer);
+//        Pair<View, String> pair2 = Pair.create(view, transitionNameImg);
+//        activity.supportStartPostponedEnterTransition();
+//        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pair1, pair2);
+//        Intent intent = new Intent(context, c);
+//        intent.putExtra(ImageDetailActivity.BUNDLE_VAL, bundle);
+//        ActivityCompat.startActivity(context, intent, options.toBundle());
     }
 
 
@@ -195,5 +153,9 @@ public class GlobalAppController {
 
     public Context getContext() {
         return context;
+    }
+
+    public AppEventBus getAppEventBus() {
+        return appEventBus;
     }
 }
