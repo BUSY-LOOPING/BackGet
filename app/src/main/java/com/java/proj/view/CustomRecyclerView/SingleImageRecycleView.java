@@ -25,4 +25,14 @@ public class SingleImageRecycleView extends RecyclerView {
     public ViewHolder getChildViewHolder(@NonNull View child) {
         return super.getChildViewHolder(child);
     }
+
+    @Override
+    public void onScrollStateChanged(int state) {
+        super.onScrollStateChanged(state);
+    }
+
+    @Override
+    public void onScrolled(int dx, int dy) {
+        super.onScrolled(dx, dy);
+    }
 }
