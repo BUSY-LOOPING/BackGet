@@ -18,5 +18,7 @@
     <color name="loadingWindow">#161616</color>
     <color name="inner_custom_separator">#ffedf1</color>
     <color name="inner_tabIndicator_text">#ff3d68</color>
+    <color name="searchBox">#ED5174</color>
     <color name="like">#e090a1</color>
+    <color name="hint">#83FF3D68</color>
 </resources>

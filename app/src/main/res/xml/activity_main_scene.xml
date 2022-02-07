@@ -22,6 +22,7 @@
 
     <ConstraintSet android:id="@+id/end">
         <Constraint
+            android:visibility="invisible"
             android:id="@+id/topRelLayout"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
@@ -35,10 +36,11 @@
 
         <Constraint
             android:id="@+id/constraintLayout4"
+            android:visibility="visible"
             motion:layout_constraintTop_toTopOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
             android:alpha="1"/>

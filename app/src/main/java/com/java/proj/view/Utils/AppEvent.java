@@ -5,6 +5,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
+import androidx.core.util.Pair;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ public class AppEvent implements Parcelable {
     public int arg1;
     public int arg2;
     public Bundle extras;
-    public WeakReference<ArrayList<Object>> weakReferenceList;
+    public WeakReference<ArrayList<Pair<String, Object>>> weakReferenceList;
 
     public AppEvent() {
         this.category = Integer.MIN_VALUE;

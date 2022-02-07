@@ -43,6 +43,7 @@ public class ApiUtilities {
     }
 
     public static void getCollectionsData(Context context, int page, int pageSize, String query, FrameLayout loadingLayout, RecyclerView.Adapter<?> adapter, ArrayList<GeneralModel> list, @NonNull GetDataCallBack callBack) {
+
         loadingLayout.setVisibility(View.VISIBLE);
         callBack.isLoading(true);
         ApiUtilities.getApiInterface().searchCollections(page, pageSize, query, "popular")
@@ -85,7 +86,7 @@ public class ApiUtilities {
                         Log.d("myerr", t.toString());
                         callBack.isLoading(false);
                         loadingLayout.setVisibility(View.GONE);
-                        Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

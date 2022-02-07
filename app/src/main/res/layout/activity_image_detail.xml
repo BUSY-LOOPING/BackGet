@@ -7,11 +7,24 @@
     android:background="@color/white"
     tools:context=".Activities.ImageDetailActivity">
 
+    <ImageView
+        android:id="@+id/closeBtn"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="50dp"
+        android:contentDescription="@string/closebtn"
+        android:src="@drawable/ic_right_24"
+        android:rotationY="180"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/black" />
+
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/img_parent"
-        android:layout_marginHorizontal="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="10dp"
         android:transitionName="@string/target_img_transition_parent"
         app:cardCornerRadius="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -31,9 +44,9 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/likeBtn"
-        android:backgroundTint="@color/white"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
         app:cardCornerRadius="100dp"
         app:cardElevation="5dp"
         app:cardUseCompatPadding="true"
@@ -44,8 +57,8 @@
 
         <com.busy.looping.like_view_library.LikeView
             android:layout_width="30dp"
-            android:layout_margin="20dp"
             android:layout_height="30dp"
+            android:layout_margin="20dp"
             app:tint="@color/like" />
 
     </com.google.android.material.card.MaterialCardView>

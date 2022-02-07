@@ -14,9 +14,14 @@ public class UserModel implements Serializable {
     @Expose
     private String name;
 
-    public UserModel(String id, String name) {
+    @SerializedName("profile_image")
+    @Expose
+    private UserProfileImageModel userProfileImageModel;
+
+    public UserModel(String id, String name, UserProfileImageModel userProfileImageModel) {
         this.id = id;
         this.name = name;
+        this.userProfileImageModel = userProfileImageModel;
     }
 
     public String getId() {
@@ -33,5 +38,13 @@ public class UserModel implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public UserProfileImageModel getUserProfileImageModel() {
+        return userProfileImageModel;
+    }
+
+    public void setUserProfileImageModel(UserProfileImageModel userProfileImageModel) {
+        this.userProfileImageModel = userProfileImageModel;
     }
 }

@@ -52,6 +52,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     .load(list.get(position).getUriModel().getRegular())
                     .into(holder.imageView);
             holder.likeNumber.setText(list.get(position).getLikes());
+            ViewCompat.setTransitionName(holder.cardView , "_card_" + position);
+            ViewCompat.setTransitionName(holder.imageView , "_image_" + position);
         }
     }
 

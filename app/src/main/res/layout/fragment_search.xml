@@ -1,15 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainFragment.SearchFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:textColor="@color/black"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="search fragment" />
+    <EditText
+        android:id="@+id/searchView"
+        android:layout_width="0dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="10dp"
+        android:imeOptions="actionSearch"
+        android:foreground="@drawable/search_view_bg"
+        android:background="@android:color/transparent"
+        android:drawableStart="@drawable/ic_search"
+        android:drawablePadding="5dp"
+        android:drawableTint="@color/hint"
+        android:fontFamily="@font/product_sans_regular"
+        android:hint="@string/searchBoxHint"
+        android:inputType="text|textVisiblePassword|textAutoComplete"
+        android:maxLines="1"
+        android:paddingStart="10dp"
+        android:paddingEnd="5dp"
+        android:singleLine="true"
+        android:textColor="@color/inner_tabIndicator_text"
+        android:textColorHint="@color/hint"
+        android:textCursorDrawable="@drawable/cursor_drawable"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.9"
+        tools:targetApi="m"
+        tools:ignore="UnusedAttribute" />
 
-</FrameLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchView" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

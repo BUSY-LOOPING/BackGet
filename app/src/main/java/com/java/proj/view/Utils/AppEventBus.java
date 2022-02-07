@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
+import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.java.proj.view.Utils.AppEvent;
@@ -75,6 +76,13 @@ public class AppEventBus {
             throw new IllegalArgumentException();
 
         mBroadcastManager.registerReceiver(receiver, createIntentFilter(receiver));
+    }
+
+    public void unregister(@Nullable Receiver<?> receiver) {
+        if (receiver == null)
+            return; // safe to pass null receiver
+
+        mBroadcastManager.unregisterReceiver(receiver);
     }
 
     private static IntentFilter createIntentFilter(Receiver<?> receiver) {

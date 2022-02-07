@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.java.proj.view.Utils.AppEventBus;
 import com.java.proj.view.Utils.GlobalAppController;
@@ -14,17 +15,19 @@ import com.java.proj.view.Utils.GlobalAppControllerAccessor;
 import com.java.proj.view.Utils.GlobalAppControllerService;
 
 /**
- *
+ *Application class with globalAppControllerService
  */
 public class ApplicationClass extends Application
         implements GlobalAppControllerAccessor.Provider {
     private GlobalAppController globalAppController;
     private GlobalAppControllerService globalAppControllerService;
-    private MainActivity mainActivity;
     private final ServiceConnection globalAppControllerServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
             globalAppControllerService = ((GlobalAppControllerService.LocalBinder) iBinder).getService();
+            if (globalAppControllerService == null) {
+                Toast.makeText(ApplicationClass.this, "service connected null", Toast.LENGTH_SHORT).show();
+            }
             onGlobalAppControllerServiceConnected();
         }
 
@@ -34,7 +37,6 @@ public class ApplicationClass extends Application
             onGlobalAppControllerServiceDisconnected();
         }
     };
-
 
     private static final String TAG = "ApplicationClassTag";
 
@@ -90,13 +92,17 @@ public class ApplicationClass extends Application
     @Override
     public GlobalAppController getGlobalAppControllerInstance() {
         if (globalAppControllerService != null) {
-            return globalAppControllerService.getGlobalAppController();
+
+            GlobalAppController globalAppController = globalAppControllerService.getGlobalAppController();
+            if (globalAppController == null) {
+                Log.d(TAG, "getGlobalAppController: null");
+            } else {
+                Log.d(TAG, "getGlobalAppController: not null");
+            }
+            return globalAppController;
         } else {
             return globalAppController;
         }
     }
 
-    public void setMainActivity(MainActivity mainActivity) {
-        this.mainActivity = mainActivity;
-    }
 }

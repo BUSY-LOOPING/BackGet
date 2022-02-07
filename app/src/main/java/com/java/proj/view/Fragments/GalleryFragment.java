@@ -1,6 +1,7 @@
 package com.java.proj.view.Fragments;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -11,7 +12,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +23,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -91,21 +92,13 @@ public class GalleryFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
         init(view);
-//        if (!checkPermission()) {
-//            requestPermission();
-//        } else {
-//            set();
-//        }
-
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if (!checkPermission()) {
-            requestPermission();
-        } else {
+        if (checkPermission()) {
             set();
         }
     }
@@ -173,21 +166,21 @@ public class GalleryFragment extends Fragment {
     }
 
     private void requestPermission() {
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-//            try {
-//                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
-//                intent.addCategory("android.intent.category.DEFAULT");
-//                intent.setData(Uri.parse(String.format("package:%s",context.getPackageName())));
-//                startActivityForResult(intent, 2296);
-//            } catch (Exception e) {
-//                Intent intent = new Intent();
-//                intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
-//                startActivityForResult(intent, 2296);
-//            }
-//        } else {
-        //below android 11
-//            ActivityCompat.requestPermissions((Activity) context, permissions, PERMISSION_REQUEST_CODE);
-//        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            try {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                intent.addCategory("android.intent.category.DEFAULT");
+                intent.setData(Uri.parse(String.format("package:%s",context.getPackageName())));
+                startActivityForResult(intent, 2296);
+            } catch (Exception e) {
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                startActivityForResult(intent, 2296);
+            }
+        } else {
+//        below android 11
+            ActivityCompat.requestPermissions((Activity) context, permissions, PERMISSION_REQUEST_CODE);
+        }
         permissionResult.launch(permissions[0]);
     }
 

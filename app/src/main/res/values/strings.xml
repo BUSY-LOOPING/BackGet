@@ -8,10 +8,15 @@
     <string name="pro">Pro</string>
     <string name="like_string">Liked</string>
     <string name="provide_read_permission">Provide read permission to display Images</string>
+    <string name="by_unsplash">-Unsplash</string>
     <!-- TODO: Transition Names -->
     <string name="target_img_transition">transition_target</string>
     <string name="target_img_transition_parent">transition_target_parent</string>
     <string name="like_transition">transition_like</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="closebtn">closeBtn</string>
+    <string name="_0">0</string>
+    <string name="loading">Loading</string>
+    <string name="searchBoxHint">Search id, artist or topic</string>
 
 </resources>

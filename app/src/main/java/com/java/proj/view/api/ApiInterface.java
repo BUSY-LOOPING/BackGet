@@ -3,6 +3,7 @@ package com.java.proj.view.api;
 import static com.java.proj.view.api.ApiUtilities.API_KEY;
 
 import com.java.proj.view.Models.CollectionModel;
+import com.java.proj.view.Models.DownloadModel;
 import com.java.proj.view.Models.ImageModel;
 import com.java.proj.view.Models.SearchModel;
 
@@ -46,5 +47,12 @@ public interface ApiInterface {
             @Query("page") int page ,
             @Query("per_page") int perPage,
             @Query("order_by") String orderBy
+    );
+
+    @Headers("Authorization: Client-ID " + API_KEY)
+    @GET("/photos/{id}/download")
+    Call<DownloadModel> triggerDownload (
+            @Path(value = "id", encoded = true) String id,
+            @Query("ixid") String ixid
     );
 }
