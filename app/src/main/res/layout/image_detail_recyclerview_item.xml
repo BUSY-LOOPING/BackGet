@@ -13,8 +13,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
+        <com.ortiz.touchview.TouchImageView
+            android:focusableInTouchMode="true"
             android:id="@+id/img"
+            app:zoom_enabled="true"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
@@ -35,9 +37,9 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/userImgContainer"
-                android:layout_centerHorizontal="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
                 app:cardCornerRadius="100dp">
 
                 <ImageView
@@ -50,14 +52,14 @@
 
             <com.busy.looping.like_view_library.LikeView
                 android:id="@+id/likeView"
-                app:duration="300"
-                app:interpolator="FastOutLinearIn"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_below="@+id/userImgContainer"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="22dp"
-                android:tint="@color/like" />
+                android:tint="@color/like"
+                app:duration="300"
+                app:interpolator="FastOutLinearIn" />
 
             <TextView
                 android:id="@+id/likeTxt"
@@ -71,6 +73,7 @@
                 android:textColor="@color/white" />
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/downloadBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/likeTxt"
@@ -80,6 +83,7 @@
                 app:cardCornerRadius="100dp">
 
                 <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/downloadLottieView"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:layout_margin="8dp"

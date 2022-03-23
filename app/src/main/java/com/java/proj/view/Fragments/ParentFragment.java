@@ -5,22 +5,18 @@ import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.os.Bundle;
-import android.transition.Fade;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.transition.Slide;
-import androidx.transition.TransitionInflater;
-import androidx.transition.TransitionSet;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.viewpager.widget.ViewPager;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -30,12 +26,11 @@ import com.airbnb.lottie.model.KeyPath;
 import com.airbnb.lottie.value.LottieFrameInfo;
 import com.airbnb.lottie.value.SimpleLottieValueCallback;
 import com.google.android.material.tabs.TabLayout;
-import com.java.proj.view.Activities.ImageDetailActivity;
 import com.java.proj.view.AppBaseFragment;
-import com.java.proj.view.CustomTransition;
-import com.java.proj.view.Events;
+import com.java.proj.view.DataBase.LikedDataBase;
 import com.java.proj.view.MainActivity;
 import com.java.proj.view.MainFragment.MainFragmentPagerAdapter;
+import com.java.proj.view.Models.LikesModel;
 import com.java.proj.view.R;
 import com.java.proj.view.Utils.AppEvent;
 import com.java.proj.view.Utils.AppEventBus;
@@ -46,6 +41,7 @@ public class ParentFragment extends AppBaseFragment {
     public static final String PARENT_CONTAINER = "ParentFragmentRootContainer";
     private Bundle bundle;
     private Context context;
+    private LikesModel likesModel;
 
     //views
     private LottieAnimationView lottieAnimationView, download_icon;
@@ -58,11 +54,13 @@ public class ParentFragment extends AppBaseFragment {
     //    private MainFragmentAdapter mainFragmentAdapter;
     private MainFragmentPagerAdapter mainFragmentPagerAdapter;
     private ParentFragment.AppEventReceiver appEventReceiver;
+    private int prevPos = 0;
+    private boolean resumedFirstFrag = false;
 
     public static class AppEventReceiver extends AppEventBus.Receiver<ParentFragment> {
         private static final int[] FILTER = new int[]{
-//                EventDef.Category.IMAGE_CLICK,
-                EventDef.Category.GALLERY_BTN
+                EventDef.Category.TOOLBAR,
+                EventDef.Category.BTN
         };
 
         public AppEventReceiver(ParentFragment holder, int[] categoryFilter) {
@@ -106,6 +104,10 @@ public class ParentFragment extends AppBaseFragment {
         if (appEventReceiver == null)
             appEventReceiver = new AppEventReceiver(this, AppEventReceiver.FILTER);
         eventBus().register(appEventReceiver);
+        AppBaseFragment fragment = mainFragmentPagerAdapter.getRegisteredFragment(prevPos);
+        if (fragment != null)
+            fragment.onResumeInViewPager();
+
     }
 
     @Override
@@ -121,7 +123,10 @@ public class ParentFragment extends AppBaseFragment {
         return view;
     }
 
-    private void init(View view) {
+    private void init(@NonNull View view) {
+        likesModel = new ViewModelProvider((ViewModelStoreOwner) context).get(LikesModel.class);
+        LikedDataBase likedDataBase = LikedDataBase.getInstance(context);
+        likesModel.getCurrentLikedList().setValue(likedDataBase.getGeneralModelList());
         lottieAnimationView = view.findViewById(R.id.share_btn);
         download_icon = view.findViewById(R.id.download_btn_lottie);
         download_icon.addValueCallback(new KeyPath("**"),
@@ -132,6 +137,7 @@ public class ParentFragment extends AppBaseFragment {
                         return new PorterDuffColorFilter(ContextCompat.getColor(context, R.color.pink), PorterDuff.Mode.SRC_ATOP);
                     }
                 });
+        download_icon.playAnimation();
         galleryBtn = view.findViewById(R.id.galleryBtn);
         customBtn = view.findViewById(R.id.customBtn);
 //        fragmentManager = getChildFragmentManager();
@@ -142,23 +148,50 @@ public class ParentFragment extends AppBaseFragment {
         mainTabLayout = view.findViewById(R.id.tabLayoutMain);
 //        mainViewPager.setAdapter(createMainAdapter());
         mainViewPager1.setAdapter(createMainPagerAdapter());
+        mainViewPager1.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                AppBaseFragment prevFragment = mainFragmentPagerAdapter.getRegisteredFragment(prevPos);
+//                AppBaseFragment prevFragment = (AppBaseFragment) fragmentManager
+//                        .findFragmentByTag("android:switcher:" + mainViewPager1.getId() + ":" + prevPos);
+                if (prevFragment != null)
+                    prevFragment.onPauseInViewPager();
+
+                AppBaseFragment fragment = mainFragmentPagerAdapter.getRegisteredFragment(position);
+//                AppBaseFragment fragment = (AppBaseFragment) fragmentManager
+//                        .findFragmentByTag("android:switcher:" + mainViewPager1.getId() + ":" + position);
+                if (fragment != null)
+                    fragment.onResumeInViewPager();
+
+                prevPos = position;
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
         mainTabLayout.setupWithViewPager(mainViewPager1);
 //        {
 //            TabLayoutMediator tabLayoutMediator = new TabLayoutMediator(mainTabLayout, mainViewPager,
 //                    (tab, position) -> tab.setText(FragmentList.getFragment(position).toString()));
 //            tabLayoutMediator.attach();
 //        }
-
     }
 
     private void listeners() {
         lottieAnimationView.setOnClickListener(v -> {
-            AppEvent appEvent = new AppEvent(AppEvent.AppEventCategory.BUTTON_CLICK.getValue(), Events.SHARE_BUTTON_PRESSED.ordinal(), 0, 0);
+            AppEvent appEvent = new AppEvent(EventDef.Category.TOOLBAR, EventDef.TOOLBAR_EVENTS.SHARE_BTN, 0, 0);
             eventBus().post(appEvent);
         });
 
         galleryBtn.setOnClickListener(v -> {
-            AppEvent appEvent = new AppEvent(EventDef.Category.GALLERY_BTN, EventDef.Category.GALLERY_BTN, 0, 0);
+            AppEvent appEvent = new AppEvent(EventDef.Category.BTN, EventDef.BUTTON_EVENTS.GALLERY_BUTTON, 0, 0);
             Bundle bundle = new Bundle();
             bundle.putInt(PARENT_CONTAINER, R.id.fragment_parent_container);
             appEvent.extras = bundle;
@@ -167,39 +200,39 @@ public class ParentFragment extends AppBaseFragment {
     }
 
     private MainFragmentPagerAdapter createMainPagerAdapter() {
-        mainFragmentPagerAdapter = new MainFragmentPagerAdapter(fragmentManager);
+        mainFragmentPagerAdapter = new MainFragmentPagerAdapter(fragmentManager) {
+        };
         return mainFragmentPagerAdapter;
     }
 
-    void onReceiveAppEvent(AppEvent event) {
+    void onReceiveAppEvent(@NonNull AppEvent event) {
         switch (event.category) {
-            case EventDef.Category.IMAGE_CLICK:
-                handleImageClick(event);
+            case EventDef.Category.BTN:
+                switch (event.event) {
+                    case EventDef.BUTTON_EVENTS.GALLERY_BUTTON:
+                        Fragment fragment = GalleryFragment.newInstance(new Bundle());
+                        GlobalAppController.switchFragment(R.id.container, fragment, ((MainActivity) context).getSupportFragmentManager(),
+                                new int[]{R.anim.slide_in_right, R.anim.slide_out_left,
+                                        R.anim.slide_in_right, R.anim.slide_out_left});
+                        break;
+                }
                 break;
-            case EventDef.Category.GALLERY_BTN:
-                Fragment fragment = GalleryFragment.newInstance(new Bundle());
-
-                GlobalAppController.switchFragment(R.id.container, fragment, ((MainActivity)context).getSupportFragmentManager(),
-                        new int[] {R.anim.slide_in_right, R.anim.slide_out_left,
-                                R.anim.slide_in_right, R.anim.slide_out_left});
+            case EventDef.Category.TOOLBAR:
+                switch (event.event) {
+                    case EventDef.TOOLBAR_EVENTS.SHARE_BTN:
+                        lottieAnimationView.playAnimation();
+                        break;
+                }
                 break;
         }
-    }
-
-    private void handleImageClick(AppEvent event) {
-//        Fragment fragment = ImageDetailFragment.newInstance(event.extras);
-//        fragment.setSharedElementEnterTransition(new CustomTransition());
-//        fragment.setEnterTransition(new Fade());
-//        setExitTransition(new Fade());
-//        fragment.setSharedElementReturnTransition(new CustomTransition());
-//        postponeEnterTransition();
-////        GlobalAppController.switchFragment(R.id.container, fragment, this,fragmentManager, event.weakReferenceList.get());
-//        GlobalAppController.switchContent(context, ImageDetailActivity.class, event.extras, (View) event.weakReferenceList.get().get(0).second, (View) event.weakReferenceList.get().get(1).second);
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        AppBaseFragment prevFragment = mainFragmentPagerAdapter.getRegisteredFragment(prevPos);
+        if (prevFragment != null)
+            prevFragment.onPauseInViewPager();
         eventBus().unregister(appEventReceiver);
     }
 }

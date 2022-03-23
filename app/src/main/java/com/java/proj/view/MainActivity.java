@@ -29,6 +29,8 @@ import com.java.proj.view.Utils.AppEventBus;
 import com.java.proj.view.Utils.GlobalAppController;
 import com.java.proj.view.Utils.GlobalAppControllerAccessor;
 
+import java.io.IOException;
+
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MyMainActivity";
 
@@ -62,6 +64,16 @@ public class MainActivity extends AppCompatActivity {
         setWindowFlag(this, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, false);
         window.setStatusBarColor(Color.TRANSPARENT);
         setContentView(R.layout.activity_main);
+
+        int pid = android.os.Process.myPid();
+        String whiteList = "logcat -P '" + pid + "'";
+        try {
+            Runtime.getRuntime().exec(whiteList).waitFor();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.container, ParentFragment.newInstance(new Bundle()))

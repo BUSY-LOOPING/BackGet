@@ -1,6 +1,10 @@
 package com.java.proj.view.MainFragment;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.util.SparseArray;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -8,13 +12,59 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
+import com.java.proj.view.AppBaseFragment;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class MainFragmentPagerAdapter extends FragmentPagerAdapter {
+    private AppBaseFragment mCurrentFragment;
+    private final HashMap<Integer, AppBaseFragment> registeredFragments = new HashMap<>();
+
     public MainFragmentPagerAdapter(@NonNull FragmentManager fm) {
         super(fm);
     }
 
     public MainFragmentPagerAdapter(@NonNull FragmentManager fm, int behavior) {
         super(fm, behavior);
+    }
+
+    @Override
+    public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+        if (getCurrentFragment() != object) {
+            mCurrentFragment = (AppBaseFragment) object;
+        }
+        super.setPrimaryItem(container, position, object);
+    }
+
+
+    public AppBaseFragment getCurrentFragment() {
+        return mCurrentFragment;
+    }
+
+    @NonNull
+    @Override
+    public Object instantiateItem(@NonNull ViewGroup container, int position) {
+        AppBaseFragment fragment = (AppBaseFragment) super.instantiateItem(container, position);
+        registeredFragments.put(position, fragment);
+        Log.d("mylog", "instantiateItem: " + position);
+        fragmentInstantiationFinished(position, fragment);
+        return fragment;
+    }
+
+    protected void fragmentInstantiationFinished(int pos, AppBaseFragment fragment) {
+    }
+
+    @Override
+    public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+        registeredFragments.remove(position);
+        Log.d("mylog", "destroyItem: pos = "+  position);
+        super.destroyItem(container, position, object);
+    }
+
+    @Nullable
+    public AppBaseFragment getRegisteredFragment(int position) {
+        return registeredFragments.get(position);
     }
 
     @NonNull
@@ -37,6 +87,7 @@ public class MainFragmentPagerAdapter extends FragmentPagerAdapter {
     public int getCount() {
         return FragmentList.getSize();
     }
+
 
     @Nullable
     @Override

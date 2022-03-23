@@ -12,15 +12,18 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.FloatRange;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
 import com.java.proj.view.AppBaseFragment;
 import com.java.proj.view.CallBacks.ScrollCallback;
+import com.java.proj.view.CallBacks.SingleImageRecyclerViewListener;
 import com.java.proj.view.CustomRecyclerView.SingleImageRecycleView;
-import com.java.proj.view.MainFragment.RecentFragment;
 import com.java.proj.view.Models.GeneralModel;
+import com.java.proj.view.Popup.UtilsPopup;
 import com.java.proj.view.R;
 import com.java.proj.view.RecyclerViewAdapters.SingleImageScrollableAdapter;
 import com.java.proj.view.Utils.AppEvent;
@@ -30,7 +33,7 @@ import com.java.proj.view.Utils.EventDef;
 import java.util.ArrayList;
 
 
-public class ImageDetailFragment extends AppBaseFragment {
+public class ImageDetailFragment extends AppBaseFragment implements SingleImageRecyclerViewListener {
     public static final String BUNDLE_VAL = "ImageDetailActivityBundle";
     public static final String LOADED_URL = "ImageDetailActivityImgUrl";
     public static final String LIST = "ImageDetailActivityImgList";
@@ -43,6 +46,7 @@ public class ImageDetailFragment extends AppBaseFragment {
     private Context context;
     private ArrayList<GeneralModel> list;
     private int pos;
+    private SingleImageRecyclerViewListener singleImageRecyclerViewListener;
 
     //views
     private ImageView backImg;
@@ -139,6 +143,7 @@ public class ImageDetailFragment extends AppBaseFragment {
     private void init(View view) {
         appEventReceiver = new AppEventReceiver(this, AppEventReceiver.FILTERS);
         eventBus().register(appEventReceiver);
+        singleImageRecyclerViewListener = this;
         list = (ArrayList<GeneralModel>) bundle.getSerializable(LIST);
         pos = bundle.getInt(POS, 0);
         loadingLayout = view.findViewById(R.id.loadingLayout);
@@ -147,7 +152,8 @@ public class ImageDetailFragment extends AppBaseFragment {
         recycleView = view.findViewById(R.id.recyclerView);
         layoutManager = new LinearLayoutManager(context);
         recycleView.setItemViewCacheSize(3);
-        adapter = new SingleImageScrollableAdapter(context, list, bundle);
+
+        adapter = new SingleImageScrollableAdapter(context, list, bundle, singleImageRecyclerViewListener, recycleView);
     }
 
     public static int getAlphaFor(@FloatRange(from = 0.0f, to = 1.0f) float alpha) {
@@ -213,6 +219,24 @@ public class ImageDetailFragment extends AppBaseFragment {
 
     public static void setScrollCallback(ScrollCallback scrollCallback) {
         ImageDetailFragment.scrollCallback = scrollCallback;
+    }
+
+    @Override
+    public void onLikeClick(boolean isLiked, int pos) {
+
+    }
+
+    @Override
+    public void onDownloadClick(int pos) {
+        Bundle bundle = new Bundle();
+        bundle.putString(UtilsPopup.DOWNLOAD_URI, list.get(pos).getUriModel().getRegular());
+        FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
+        showDownloadPopup(fragmentManager, bundle);
+    }
+
+    private void showDownloadPopup(FragmentManager fragmentManager, Bundle bundle) {
+        UtilsPopup downloadPopup = UtilsPopup.newInstance(bundle);
+        downloadPopup.show(fragmentManager, downloadPopup.getTag());
     }
 
     @Override

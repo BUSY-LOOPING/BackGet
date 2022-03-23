@@ -3,6 +3,7 @@
     <string name="app_icon">App icon</string>
     <string name="container_below_appbar">Container below appbar</string>
     <string name="downloaded_txt">Downloaded</string>
+    <string name="download_txt">Download</string>
     <string name="gallery">Gallery</string>
     <string name="custom">Custom</string>
     <string name="pro">Pro</string>

@@ -31,11 +31,13 @@ public class GlobalAppController {
 
     public GlobalAppController(Context context, Bundle savedInstanceState) {
         this.context = context;
+
         appEventBus = new AppEventBus(context);
         appEventReceiver = new AppEventReceiver(this);
         appEventBus.register(appEventReceiver);
         init(context);
     }
+
 
     public void postToBus(AppEvent appEvent) {
         if (appEvent != null) {
@@ -44,13 +46,8 @@ public class GlobalAppController {
     }
 
     void init(Context context) {
+
     }
-
-
-//    private MainFragmentAdapter createMainAdapter() {
-//        mainFragmentAdapter = new MainFragmentAdapter((MainActivity) context);
-//        return mainFragmentAdapter;
-//    }
 
 
     public static class AppEventReceiver extends AppEventBus.Receiver<GlobalAppController> {
@@ -85,29 +82,9 @@ public class GlobalAppController {
     }
 
     private void handleClick(AppEvent event) {
-//        int eventInt = event.event;
-//        Bundle extras = event.extras;
-//
-//        if (Events.SHARE_BUTTON_PRESSED.ordinal() == eventInt) {
-////            lottieAnimationView.playAnimation();
-//        } else if (Events.IMAGE_CLICK.ordinal() == eventInt) {
-////            Bundle bundle = new Bundle();
-////            bundle.putString(ImageDetailActivity.LOADED_URL, extras.getString(ImageDetailActivity.LOADED_URL, ""));
-////            bundle.putInt(ImageDetailActivity.LOADED_POS, extras.getInt(ImageDetailActivity.LOADED_POS, 0));
-////            bundle.putSerializable(ImageDetailActivity.URL_LIST, extras.getSerializable(ImageDetailActivity.URL_LIST));
-////            MaterialCardView cardView = (MaterialCardView) event.weakReferenceList.get().get(0);
-////            ImageView imageView = (ImageView) event.weakReferenceList.get().get(1);
-////            if (cardView == null || imageView == null) {
-////                return;
-////            }
-////            switchContent(context, ImageDetailActivity.class, extras, cardView, imageView);
-//        } else if (Events.GALLERY_BUTTON_PRESSED.ordinal() == eventInt) {
-//            Fragment fragment = GalleryFragment.newInstance(new Bundle());
-//            switchFragment(android.R.id.content, fragment);
-//        }
     }
 
-    public static void switchFragment(int id, Fragment fragment, FragmentManager fragmentManager,@Size(4) @Nullable int[] anim) {
+    public static void switchFragment(int id, Fragment fragment, FragmentManager fragmentManager, @Size(4) @Nullable int[] anim) {
         if (!fragmentManager.isDestroyed()) {
             FragmentTransaction fragmentTransaction =
                     fragmentManager
@@ -171,4 +148,6 @@ public class GlobalAppController {
             eventBus.post(event);
         }
     }
+
+
 }

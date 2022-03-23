@@ -12,23 +12,6 @@
         android:layout_height="match_parent"
         android:overScrollMode="never"/>
 
-    <FrameLayout
-        android:id="@+id/loadingLayout"
-        android:visibility="gone"
-        android:layout_gravity="center"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:background="@drawable/widget_round">
-
-        <com.github.ybq.android.spinkit.SpinKitView
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/SpinKitView.Small.CubeGrid"
-            app:SpinKit_Color="#f7b400"/>
-
-    </FrameLayout>
-
-
+    <include layout="@layout/loading_layout"/>
 
 </FrameLayout>

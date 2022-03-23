@@ -7,25 +7,26 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
-import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.java.proj.view.Activities.ImageDetailActivity;
 import com.java.proj.view.AppBaseFragment;
 import com.java.proj.view.CallBacks.GetDataCallBack;
 import com.java.proj.view.CallBacks.RecyclerViewListener;
 import com.java.proj.view.CallBacks.ScrollCallback;
-import com.java.proj.view.Events;
+import com.java.proj.view.DataBase.LikedDataBase;
 import com.java.proj.view.Fragments.ImageDetailFragment;
 import com.java.proj.view.MainActivity;
-import com.java.proj.view.Models.CollectionModel;
 import com.java.proj.view.Models.GeneralModel;
+import com.java.proj.view.Models.LikesModel;
 import com.java.proj.view.R;
 import com.java.proj.view.RecyclerViewAdapters.RecyclerViewAdapter;
 import com.java.proj.view.Utils.AppEvent;
@@ -35,8 +36,8 @@ import com.java.proj.view.Utils.GlobalAppController;
 import com.java.proj.view.api.ApiUtilities;
 
 import java.io.Serializable;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.List;
 
 public class GeneralInnerFragment extends AppBaseFragment implements RecyclerViewListener, ScrollCallback {
     private final String TAG = "MyGeneralInnerFragment";
@@ -51,14 +52,34 @@ public class GeneralInnerFragment extends AppBaseFragment implements RecyclerVie
     private boolean isLoading, isLastPage;
     private FragmentManager fragmentManager;
 
-    private FrameLayout loadingLayout;
+    private LinearLayout loadingLayout;
     private RecyclerView recyclerView;
     private GridLayoutManager layoutManager;
     private RecyclerViewAdapter adapter;
     private ArrayList<GeneralModel> list;
     private RecyclerViewListener listener;
+    private LikesModel likesModel;
+    private final Observer<List<GeneralModel>> observer = new Observer<List<GeneralModel>>() {
+        @Override
+        public void onChanged(List<GeneralModel> generalModels) {
+//            for (GeneralModel generalModel : generalModels) {
+//                GeneralModel model = Iterables.tryFind(list,
+//                        new Predicate<GeneralModel>() {
+//                            @Override
+//                            public boolean apply(GeneralModel input) {
+//                                return input.getImageId().equals(generalModel.getImageId());
+//                            }
+//                        }).orNull();
+//                if (model != null) {
+//                    model.setLikes(generalModel.getLikes());
+//                    model.setLiked(true);
+//                }
+//            }
+        }
+    };
 
     private AppEventReceiver appEventReceiver;
+    private boolean registered = false;
 
     public static class AppEventReceiver extends AppEventBus.Receiver<GeneralInnerFragment> {
         public static final int[] FILTERS = {
@@ -89,18 +110,19 @@ public class GeneralInnerFragment extends AppBaseFragment implements RecyclerVie
         ImageDetailFragment.setScrollCallback(this);
         fragment.setEnterTransition(new Fade());
         setExitTransition(new Fade());
-        GlobalAppController.switchFragment(R.id.container, fragment,fragmentManager, null);
+        GlobalAppController.switchFragment(R.id.container, fragment, fragmentManager, null);
     }
 
     public GeneralInnerFragment() {
         // Required empty public constructor
     }
 
-    public static Fragment newInstance(Bundle bundle) {
-        Fragment fragment = new GeneralInnerFragment();
+    public static AppBaseFragment newInstance(Bundle bundle) {
+        AppBaseFragment fragment = new GeneralInnerFragment();
         fragment.setArguments(bundle);
         return fragment;
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -111,22 +133,26 @@ public class GeneralInnerFragment extends AppBaseFragment implements RecyclerVie
     }
 
     @Override
+    public void onResumeInViewPager() {
+        if (!registered) {
+            eventBus(context);
+            eventBus(context).register(appEventReceiver);
+            registered = true;
+        }
+    }
+
+    @Override
+    public void onPauseInViewPager() {
+        eventBus(context).unregister(appEventReceiver);
+        registered = false;
+    }
+
+    @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context = context;
     }
 
-    @Override
-    public void onAttachFragment(@NonNull Fragment childFragment) {
-        super.onAttachFragment(childFragment);
-        eventBus().register(appEventReceiver);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        eventBus().unregister(appEventReceiver);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -144,12 +170,14 @@ public class GeneralInnerFragment extends AppBaseFragment implements RecyclerVie
     }
 
     private void init(View view) {
+        list = new ArrayList<>();
         appEventReceiver = new AppEventReceiver(this, AppEventReceiver.FILTERS);
+        likesModel = new ViewModelProvider((ViewModelStoreOwner) context).get(LikesModel.class);
+//        likesModel.getCurrentLikedList().observe((LifecycleOwner) context, observer);
         fragmentManager = ((MainActivity) context).getSupportFragmentManager();
         listener = this;
         loadingLayout = view.findViewById(R.id.loadingLayout);
         recyclerView = view.findViewById(R.id.recyclerView);
-        list = new ArrayList<>();
         adapter = new RecyclerViewAdapter(context, list, listener);
     }
 
@@ -200,13 +228,14 @@ public class GeneralInnerFragment extends AppBaseFragment implements RecyclerVie
                 GeneralInnerFragment.this.isLoading = isLoading;
                 if (isLoading) {
                     AppEvent appEvent = new AppEvent(EventDef.CALLBACK_EVENTS.LOADING_CALLBACK, EventDef.CALLBACK_EVENTS.LOADING, 0, 0);
-                    eventBus().post(appEvent);
+                    eventBus(context).post(appEvent);
                 } else {
                     AppEvent appEvent1 = new AppEvent(EventDef.CALLBACK_EVENTS.LOADING_CALLBACK, EventDef.CALLBACK_EVENTS.NOT_LOADING, 0, 0);
                     AppEvent appEvent2 = new AppEvent(EventDef.CALLBACK_EVENTS.LIST_REFRESH_CALLBACK, EventDef.CALLBACK_EVENTS.LIST_REFRESH_CALLBACK, 0, 0);
                     appEvent2.extras.putSerializable(ImageDetailFragment.NEW_LIST, new ArrayList<>(list.subList(startIndex, list.size())));
-                    eventBus().post(appEvent2);
-                    eventBus().post(appEvent1);
+                    eventBus(context).post(appEvent2);
+                    eventBus(context).post(appEvent1);
+                    observer.onChanged(likesModel.getCurrentLikedList().getValue());
                 }
             }
 
@@ -226,12 +255,15 @@ public class GeneralInnerFragment extends AppBaseFragment implements RecyclerVie
 //        viewList.add(new Pair<>(transitionNameImgContainer, container));
 //        viewList.add(new Pair<>(transitionNameImg, view));
 //        appEvent.weakReferenceList = new WeakReference<>(viewList);
-        appEvent.extras.putSerializable(ImageDetailFragment.LIST,(Serializable) list);
+        appEvent.extras.putSerializable(ImageDetailFragment.LIST, (Serializable) list);
         appEvent.extras.putInt(ImageDetailFragment.POS, position);
 //        appEvent.extras.putString(ImageDetailFragment.LOADED_URL, list.get(position).getUriModel().getRegular());
-        AppEventBus appEventBus = eventBus();
-        if (appEventBus != null)
-            appEventBus.post(appEvent);
+        AppEventBus appEventBus = eventBus(context);
+        if (!registered) {
+            appEventBus.register(appEventReceiver);
+            registered = true;
+        }
+        appEventBus.post(appEvent);
         Log.d(TAG, "onClick(GeneralInnerFragment): ");
     }
 
@@ -242,11 +274,22 @@ public class GeneralInnerFragment extends AppBaseFragment implements RecyclerVie
 
     @Override
     public void onLike(int position) {
-
+//        LikesModel.InsertModelAsyncTask task = new LikesModel.InsertModelAsyncTask(context, likesModel.getCurrentLikedList());
+//        task.execute(list.get(position));
+        LikedDataBase db = LikedDataBase.getInstance(context);
+        db.likePicture(list.get(position));
+        db.close();
+        likesModel.addModel(list.get(position));
     }
 
     @Override
     public void onUnlike(int position) {
+//        LikesModel.DeleteModelAsyncTask task = new LikesModel.DeleteModelAsyncTask(context, likesModel.getCurrentLikedList());
+//        task.execute(list.get(position));
+        LikedDataBase db = LikedDataBase.getInstance(context);
+        db.unlikePicture(list.get(position));
+        db.close();
+        likesModel.removeModel(list.get(position));
 
     }
 
@@ -258,5 +301,6 @@ public class GeneralInnerFragment extends AppBaseFragment implements RecyclerVie
     @Override
     public void onPause() {
         super.onPause();
+
     }
 }

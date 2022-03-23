@@ -1,24 +1,19 @@
 package com.java.proj.view.MainFragment;
 
 import android.content.Context;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.HorizontalScrollView;
-import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
-import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
-import com.google.android.material.tabs.TabLayoutMediator;
 import com.java.proj.view.AppBaseFragment;
 import com.java.proj.view.InnerFragment.InnerFragmentAdapter;
-import com.java.proj.view.InnerFragment.InnerFragmentList;
 import com.java.proj.view.InnerFragment.InnerFragmentPagerAdapter;
 import com.java.proj.view.R;
 
@@ -33,14 +28,17 @@ public class PopularFragment extends AppBaseFragment {
         // Required empty public constructor
     }
 
-//    private ViewPager2 innerViewPager;
+    //    private ViewPager2 innerViewPager;
     private ViewPager viewPager1;
     private TabLayout innerTabLayout;
+    private InnerFragmentPagerAdapter fragmentPagerAdapter;
 
     private View view;
     private Context context;
     private Bundle bundle;
+    private int prevPos = 0;
 
+    @NonNull
     public static PopularFragment newInstance(Bundle bundle) {
         PopularFragment fragment = new PopularFragment();
         fragment.setArguments(bundle);
@@ -62,7 +60,7 @@ public class PopularFragment extends AppBaseFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_popular, container, false);
@@ -70,7 +68,23 @@ public class PopularFragment extends AppBaseFragment {
         return view;
     }
 
-    private void init(View view) {
+    @Override
+    public void onResumeInViewPager() {
+        super.onResumeInViewPager();
+        AppBaseFragment currFragment = fragmentPagerAdapter.getRegisteredFragment(viewPager1.getCurrentItem());
+        if (currFragment != null)
+            currFragment.onResumeInViewPager();
+    }
+
+    @Override
+    public void onPauseInViewPager() {
+        super.onPauseInViewPager();
+        AppBaseFragment currFragment = fragmentPagerAdapter.getRegisteredFragment(viewPager1.getCurrentItem());
+        if (currFragment != null)
+            currFragment.onPauseInViewPager();
+    }
+
+    private void init(@NonNull View view) {
 //        innerViewPager = view.findViewById(R.id.innerViewPager);
         viewPager1 = view.findViewById(R.id.innerViewPager);
         innerTabLayout = view.findViewById(R.id.innerTabLayout);
@@ -80,8 +94,39 @@ public class PopularFragment extends AppBaseFragment {
 //                    (tab, position) -> tab.setText(InnerFragmentList.getFragment(position).toString()));
 //            tabLayoutMediator.attach();
 //        }
-        viewPager1.setAdapter(createInnerFragmentAdapter());
+        fragmentPagerAdapter = createInnerFragmentAdapter();
+        viewPager1.setAdapter(fragmentPagerAdapter);
         innerTabLayout.setupWithViewPager(viewPager1);
+        viewPager1.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                AppBaseFragment prevFragment = fragmentPagerAdapter.getRegisteredFragment(prevPos);
+//                AppBaseFragment prevFragment = (AppBaseFragment) getChildFragmentManager()
+//                        .findFragmentByTag("android:switcher:" + viewPager1.getId() + prevPos);
+                if (prevFragment != null)
+                    prevFragment.onPauseInViewPager();
+
+                AppBaseFragment fragment = fragmentPagerAdapter.getRegisteredFragment(position);
+//                AppBaseFragment fragment = (AppBaseFragment) getChildFragmentManager()
+//                        .findFragmentByTag("android:switcher:" + viewPager1.getId() + position);
+                if (fragment != null)
+                    fragment.onResumeInViewPager();
+
+
+                prevPos = position;
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
 //        TabLayout.Tab tab_ = innerTabLayout.getTabAt(0);
 //        if (tab_ != null) {
 //            tab_.setIcon(R.drawable.ic_heart_filled);
@@ -98,6 +143,7 @@ public class PopularFragment extends AppBaseFragment {
 //        }
     }
 
+    @NonNull
     private InnerFragmentPagerAdapter createInnerFragmentAdapter() {
         return new InnerFragmentPagerAdapter(getChildFragmentManager());
     }

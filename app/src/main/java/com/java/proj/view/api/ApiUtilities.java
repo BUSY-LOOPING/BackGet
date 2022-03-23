@@ -91,7 +91,7 @@ public class ApiUtilities {
                 });
     }
 
-    public static void getTopicsData(Context context, int page, int pageSize, String topicNameOrId, FrameLayout loadingLayout, RecyclerView.Adapter<?> adapter, ArrayList<GeneralModel> list, @NonNull GetDataCallBack callBack) {
+    public static void getTopicsData(Context context, int page, int pageSize, String topicNameOrId, View loadingLayout, RecyclerView.Adapter<?> adapter, ArrayList<GeneralModel> list, @NonNull GetDataCallBack callBack) {
         loadingLayout.setVisibility(View.VISIBLE);
         callBack.isLoading(true);
         ApiUtilities.getApiInterface().getTopicImages(topicNameOrId, page, pageSize, "popular")

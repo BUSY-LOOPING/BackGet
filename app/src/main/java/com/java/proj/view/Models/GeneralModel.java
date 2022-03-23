@@ -1,13 +1,17 @@
 package com.java.proj.view.Models;
 
-import java.io.Serializable;
+import androidx.databinding.BaseObservable;
 
-public class GeneralModel implements Serializable {
+import java.io.Serializable;
+import java.util.Objects;
+
+public class GeneralModel extends BaseObservable implements Serializable {
     private UriModel uriModel;
     private String imageId;
     private String description;
     private UserModel userModel;
     private String likes;
+    private boolean isLiked = false;
 
     public GeneralModel(UriModel uriModel, String imageId, String description, String likes, UserModel userModel) {
         this.uriModel = uriModel;
@@ -56,5 +60,32 @@ public class GeneralModel implements Serializable {
 
     public void setLikes(String likes) {
         this.likes = likes;
+    }
+
+    public boolean isLiked() {
+        return isLiked;
+    }
+
+    public void setLiked(boolean liked) {
+        if (isLiked != liked) {
+            if (isLiked)
+                likes = "" + (Integer.parseInt(likes) - 1);
+            else
+                likes = "" + (Integer.parseInt(likes) + 1);
+            isLiked = liked;
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GeneralModel that = (GeneralModel) o;
+        return getImageId().equals(that.getImageId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getImageId());
     }
 }

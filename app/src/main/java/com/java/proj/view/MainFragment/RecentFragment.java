@@ -7,13 +7,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -21,11 +18,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.java.proj.view.AppBaseFragment;
-import com.java.proj.view.AppBaseListWrapperFragment;
 import com.java.proj.view.CallBacks.RecyclerViewListener;
 import com.java.proj.view.CallBacks.ScrollCallback;
-import com.java.proj.view.CustomTransition;
-import com.java.proj.view.Events;
 import com.java.proj.view.Fragments.ImageDetailFragment;
 import com.java.proj.view.MainActivity;
 import com.java.proj.view.Models.GeneralModel;
@@ -38,8 +32,6 @@ import com.java.proj.view.Utils.EventDef;
 import com.java.proj.view.Utils.GlobalAppController;
 import com.java.proj.view.api.ApiUtilities;
 
-import java.io.Serializable;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,11 +57,12 @@ public class RecentFragment extends AppBaseFragment implements RecyclerViewListe
     private LinearLayout loadingLayout;
     private RecyclerViewListener listener;
     private FragmentManager fragmentManager;
+    private boolean registered = false;
 
     private RecentFragment.AppEventReceiver receiver;
 
-    public static class AppEventReceiver extends AppEventBus.Receiver<RecentFragment>{
-        public static final int [] FILTERS = {
+    public static class AppEventReceiver extends AppEventBus.Receiver<RecentFragment> {
+        public static final int[] FILTERS = {
                 EventDef.Category.IMAGE_CLICK
         };
 
@@ -99,7 +92,7 @@ public class RecentFragment extends AppBaseFragment implements RecyclerViewListe
         setExitTransition(new Fade());
 //        fragment.setSharedElementReturnTransition(new CustomTransition());
 //        postponeEnterTransition();
-        GlobalAppController.switchFragment(R.id.container, fragment,fragmentManager, null);
+        GlobalAppController.switchFragment(R.id.container, fragment, fragmentManager, null);
 //        GlobalAppController.switchContent(context, ImageDetailActivity.class, event.extras, (View) event.weakReferenceList.get().get(0).second, (View) event.weakReferenceList.get().get(1).second);
     }
 
@@ -125,16 +118,32 @@ public class RecentFragment extends AppBaseFragment implements RecyclerViewListe
         if (getArguments() != null) {
             bundle = getArguments();
         }
-        receiver = new AppEventReceiver(this, AppEventReceiver.FILTERS);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        eventBus().register(receiver);
+    }
+
+
+    @Override
+    public void onResumeInViewPager() {
+        super.onResumeInViewPager();
+        if (!registered) {
+            eventBus(context).register(receiver);
+            registered = true;
+        }
+    }
+
+    @Override
+    public void onPauseInViewPager() {
+        super.onPauseInViewPager();
+        eventBus().unregister(receiver);
+        registered = false;
     }
 
     private void init(View view) {
+        receiver = new AppEventReceiver(this, AppEventReceiver.FILTERS);
         listener = this;
         fragmentManager = ((MainActivity) context).getSupportFragmentManager();
         recyclerView = view.findViewById(R.id.recyclerView);
@@ -235,8 +244,13 @@ public class RecentFragment extends AppBaseFragment implements RecyclerViewListe
         appEvent.extras.putSerializable(ImageDetailFragment.LIST, list);
         appEvent.extras.putInt(ImageDetailFragment.POS, position);
         AppEventBus appEventBus = eventBus();
-        if (appEventBus != null)
+        if (appEventBus != null) {
+            if (!registered) {
+                appEventBus.register(receiver);
+                registered = true;
+            }
             appEventBus.post(appEvent);
+        }
         Log.d(TAG, "onClick: ");
     }
 
@@ -263,6 +277,6 @@ public class RecentFragment extends AppBaseFragment implements RecyclerViewListe
     @Override
     public void onPause() {
         super.onPause();
-        eventBus().unregister(receiver);
+//        eventBus().unregister(receiver);
     }
 }

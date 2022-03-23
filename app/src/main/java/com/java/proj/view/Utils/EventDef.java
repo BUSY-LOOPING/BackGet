@@ -7,20 +7,32 @@ import java.lang.annotation.RetentionPolicy;
 
 public class EventDef {
     // categories
-    @IntDef({Category.NONE, Category.IMAGE_CLICK, Category.TOOLBAR})
+    @IntDef({Category.NONE, Category.IMAGE_CLICK, Category.TOOLBAR, Category.BTN})
     @Retention(RetentionPolicy.SOURCE)
     public @interface Category {
         int NONE = 0;
+
         int IMAGE_CLICK = 100;
         int TOOLBAR = 101;
-        int GALLERY_BTN = 102;
+        int BTN = 102;
+    }
+
+    @IntDef({BUTTON_EVENTS.NONE, BUTTON_EVENTS.GALLERY_BUTTON, BUTTON_EVENTS.CUSTOM_BUTTON, BUTTON_EVENTS.LIKED_BUTTON, BUTTON_EVENTS.DOWNLOAD_BUTTON})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface BUTTON_EVENTS {
+        int NONE = 0;
+
+        int GALLERY_BUTTON = 300;
+        int CUSTOM_BUTTON = 301;
+        int LIKED_BUTTON = 302;
+        int DOWNLOAD_BUTTON = 303;
     }
 
     @IntDef({TOOLBAR_EVENTS.SHARE_BTN, TOOLBAR_EVENTS.PRO_BTN, TOOLBAR_EVENTS.SETTINGS_BTN})
     @Retention(RetentionPolicy.SOURCE)
     public @interface TOOLBAR_EVENTS {
-        int SHARE_BTN = 0;
-        int PRO_BTN = 1;
+        int PRO_BTN = 0;
+        int SHARE_BTN = 1;
         int SETTINGS_BTN = 2;
     }
 

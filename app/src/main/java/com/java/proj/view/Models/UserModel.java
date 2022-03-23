@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class UserModel implements Serializable {
     @SerializedName("id")
@@ -46,5 +47,18 @@ public class UserModel implements Serializable {
 
     public void setUserProfileImageModel(UserProfileImageModel userProfileImageModel) {
         this.userProfileImageModel = userProfileImageModel;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserModel userModel = (UserModel) o;
+        return getId().equals(userModel.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }

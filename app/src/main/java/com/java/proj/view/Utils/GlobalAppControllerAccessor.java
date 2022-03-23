@@ -3,7 +3,7 @@ package com.java.proj.view.Utils;
 import android.content.Context;
 
 public class GlobalAppControllerAccessor {
-    public static interface Provider{
+    public interface Provider{
         GlobalAppController getGlobalAppControllerInstance();
     }
 
