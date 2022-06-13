@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 
 import com.java.proj.view.AppBaseFragment;
@@ -16,7 +17,8 @@ import com.java.proj.view.R;
 
 import java.util.HashMap;
 
-public class InnerFragmentPagerAdapter extends FragmentStatePagerAdapter {
+public class InnerFragmentPagerAdapter extends FragmentPagerAdapter {
+    private AppBaseFragment mCurrentFragment;
     private final HashMap<Integer, AppBaseFragment> registeredFragments = new HashMap<>();
     private Context context;
 
@@ -28,6 +30,19 @@ public class InnerFragmentPagerAdapter extends FragmentStatePagerAdapter {
         super(fm, behavior);
     }
 
+    @Override
+    public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+        if (getCurrentFragment() != object) {
+            mCurrentFragment = (AppBaseFragment) object;
+        }
+        super.setPrimaryItem(container, position, object);
+    }
+
+
+    public AppBaseFragment getCurrentFragment() {
+        return mCurrentFragment;
+    }
+
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
@@ -36,6 +51,8 @@ public class InnerFragmentPagerAdapter extends FragmentStatePagerAdapter {
             registeredFragments.put(position, fragment);
         return fragment;
     }
+
+
 
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {

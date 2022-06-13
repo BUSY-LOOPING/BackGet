@@ -11,6 +11,10 @@
         <entry key="..\:/android apps/View/app/src/main/res/drawable/custom_widget_small.xml" value="0.3651041666666667" />
         <entry key="..\:/android apps/View/app/src/main/res/drawable/download_widget.xml" value="0.3651041666666667" />
         <entry key="..\:/android apps/View/app/src/main/res/drawable/drag_gandle_bg.xml" value="2.142857142857143" />
+        <entry key="..\:/android apps/View/app/src/main/res/drawable/gradient_1.xml" value="0.174" />
+        <entry key="..\:/android apps/View/app/src/main/res/drawable/gradient_2.xml" value="0.174" />
+        <entry key="..\:/android apps/View/app/src/main/res/drawable/gradient_3.xml" value="0.174" />
+        <entry key="..\:/android apps/View/app/src/main/res/drawable/gradient_list.xml" value="0.174" />
         <entry key="..\:/android apps/View/app/src/main/res/drawable/ic_cancel.xml" value="0.12447916666666667" />
         <entry key="..\:/android apps/View/app/src/main/res/drawable/ic_group_3.xml" value="0.12447916666666667" />
         <entry key="..\:/android apps/View/app/src/main/res/drawable/ic_heart.xml" value="0.14479166666666668" />
@@ -19,24 +23,30 @@
         <entry key="..\:/android apps/View/app/src/main/res/drawable/ic_home_lock.xml" value="0.12447916666666667" />
         <entry key="..\:/android apps/View/app/src/main/res/drawable/ic_launcher_background.xml" value="0.3537037037037037" />
         <entry key="..\:/android apps/View/app/src/main/res/drawable/ic_more.xml" value="0.1390625" />
+        <entry key="..\:/android apps/View/app/src/main/res/drawable/ic_outline_email_24.xml" value="0.239" />
         <entry key="..\:/android apps/View/app/src/main/res/drawable/ic_right_24.xml" value="0.1390625" />
         <entry key="..\:/android apps/View/app/src/main/res/drawable/ic_right_round.xml" value="0.1390625" />
         <entry key="..\:/android apps/View/app/src/main/res/drawable/ic_search.xml" value="0.3287037037037037" />
         <entry key="..\:/android apps/View/app/src/main/res/drawable/ic_settings.xml" value="0.3651041666666667" />
         <entry key="..\:/android apps/View/app/src/main/res/drawable/ic_union_1.xml" value="0.3651041666666667" />
+        <entry key="..\:/android apps/View/app/src/main/res/drawable/ic_user_icon.xml" value="0.239" />
         <entry key="..\:/android apps/View/app/src/main/res/drawable/inner_tab_indicator.xml" value="0.20729166666666668" />
+        <entry key="..\:/android apps/View/app/src/main/res/drawable/logout_bg.xml" value="0.1245" />
         <entry key="..\:/android apps/View/app/src/main/res/drawable/main_bg.xml" value="0.3651041666666667" />
         <entry key="..\:/android apps/View/app/src/main/res/drawable/main_tab_layout_bg.xml" value="0.20729166666666668" />
         <entry key="..\:/android apps/View/app/src/main/res/drawable/main_tablayout_indicator.xml" value="0.20729166666666668" />
+        <entry key="..\:/android apps/View/app/src/main/res/drawable/popup_2_bg.xml" value="0.18" />
         <entry key="..\:/android apps/View/app/src/main/res/drawable/popup_bg.xml" value="0.20364583333333333" />
         <entry key="..\:/android apps/View/app/src/main/res/drawable/search_view_bg.xml" value="0.20520833333333333" />
         <entry key="..\:/android apps/View/app/src/main/res/drawable/widget_round.xml" value="0.3651041666666667" />
         <entry key="..\:/android apps/View/app/src/main/res/font/font.xml" value="0.37916666666666665" />
         <entry key="..\:/android apps/View/app/src/main/res/layout-v26/activity_main.xml" value="0.19114583333333332" />
+        <entry key="..\:/android apps/View/app/src/main/res/layout-v26/fragment_settings.xml" value="0.3489583333333333" />
         <entry key="..\:/android apps/View/app/src/main/res/layout/activity_image_detail.xml" value="0.25" />
         <entry key="..\:/android apps/View/app/src/main/res/layout/activity_main.xml" value="0.10740740740740741" />
         <entry key="..\:/android apps/View/app/src/main/res/layout/custom_recycler_item.xml" value="0.19114583333333332" />
         <entry key="..\:/android apps/View/app/src/main/res/layout/custom_tab.xml" value="0.67" />
+        <entry key="..\:/android apps/View/app/src/main/res/layout/custom_view_loading_layout.xml" value="0.2864471996579735" />
         <entry key="..\:/android apps/View/app/src/main/res/layout/download_bottomsheet.xml" value="0.25" />
         <entry key="..\:/android apps/View/app/src/main/res/layout/download_popup.xml" value="0.1875" />
         <entry key="..\:/android apps/View/app/src/main/res/layout/fragment__3_d.xml" value="0.19114583333333332" />
@@ -47,10 +57,12 @@
         <entry key="..\:/android apps/View/app/src/main/res/layout/fragment_image_detail.xml" value="0.21348314606741572" />
         <entry key="..\:/android apps/View/app/src/main/res/layout/fragment_inner_general.xml" value="0.13333333333333333" />
         <entry key="..\:/android apps/View/app/src/main/res/layout/fragment_inner_liked.xml" value="0.12864583333333332" />
-        <entry key="..\:/android apps/View/app/src/main/res/layout/fragment_parent.xml" value="0.33" />
+        <entry key="..\:/android apps/View/app/src/main/res/layout/fragment_parent.xml" value="0.25" />
         <entry key="..\:/android apps/View/app/src/main/res/layout/fragment_popular.xml" value="0.2" />
+        <entry key="..\:/android apps/View/app/src/main/res/layout/fragment_profile.xml" value="0.25" />
         <entry key="..\:/android apps/View/app/src/main/res/layout/fragment_recent.xml" value="0.3277777777777778" />
-        <entry key="..\:/android apps/View/app/src/main/res/layout/fragment_search.xml" value="0.25" />
+        <entry key="..\:/android apps/View/app/src/main/res/layout/fragment_search.xml" value="0.2607944732297064" />
+        <entry key="..\:/android apps/View/app/src/main/res/layout/fragment_settings.xml" value="0.22" />
         <entry key="..\:/android apps/View/app/src/main/res/layout/fragment_textures_n_patterns.xml" value="0.19114583333333332" />
         <entry key="..\:/android apps/View/app/src/main/res/layout/fragment_upload.xml" value="0.19114583333333332" />
         <entry key="..\:/android apps/View/app/src/main/res/layout/fragment_view.xml" value="0.12" />
@@ -60,6 +72,8 @@
         <entry key="..\:/android apps/View/app/src/main/res/layout/loading_layout.xml" value="0.2" />
         <entry key="..\:/android apps/View/app/src/main/res/layout/pro_btn.xml" value="0.3489583333333333" />
         <entry key="..\:/android apps/View/app/src/main/res/layout/recycler_view_item.xml" value="0.2" />
+        <entry key="..\:/android apps/View/app/src/main/res/layout/recycler_view_item_2.xml" value="0.1774262505344164" />
+        <entry key="..\:/android apps/View/app/src/main/res/layout/share_popup.xml" value="0.12" />
       </map>
     </option>
   </component>

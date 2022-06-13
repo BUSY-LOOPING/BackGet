@@ -90,4 +90,7 @@ dependencies {
     //MagicIndicator
 //    implementation 'com.github.hackware1993:MagicIndicator:1.6.0' // for support lib
 //    implementation 'com.github.hackware1993:MagicIndicator:1.7.0' // for androidx
+
+    //toggle view
+    implementation 'com.github.luongvo:iOS-SwitchView:1.0.2'
 }

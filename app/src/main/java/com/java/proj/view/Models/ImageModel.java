@@ -8,6 +8,14 @@ public class ImageModel {
     @Expose
     private String id;
 
+    @SerializedName("width")
+    @Expose
+    private String width;
+
+    @SerializedName("height")
+    @Expose
+    private String height;
+
     @SerializedName("urls")
     @Expose
     private UriModel urls;
@@ -28,14 +36,18 @@ public class ImageModel {
     @Expose
     private LinksModel linksModel;
 
+    @SerializedName("liked_by_user")
+    private boolean likedByUser;
 
-    public ImageModel(UriModel urls, String id, String description, String likes, UserModel userModel, LinksModel linksModel) {
+
+    public ImageModel(UriModel urls, String id, String description, String likes, UserModel userModel, LinksModel linksModel, boolean likedByUser) {
         this.urls = urls;
         this.id = id;
         this.description = description;
         this.likes = likes;
         this.userModel = userModel;
         this.linksModel = linksModel;
+        this.likedByUser = likedByUser;
     }
 
     public UriModel getUrls() {
@@ -84,5 +96,13 @@ public class ImageModel {
 
     public void setLinksModel(LinksModel linksModel) {
         this.linksModel = linksModel;
+    }
+
+    public boolean isLikedByUser() {
+        return likedByUser;
+    }
+
+    public void setLikedByUser(boolean likedByUser) {
+        this.likedByUser = likedByUser;
     }
 }

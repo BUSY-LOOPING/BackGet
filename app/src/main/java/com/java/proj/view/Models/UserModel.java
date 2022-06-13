@@ -15,13 +15,23 @@ public class UserModel implements Serializable {
     @Expose
     private String name;
 
+    @SerializedName("bio")
+    @Expose
+    private String bio;
+
+    @SerializedName("username")
+    @Expose
+    private String username;
+
     @SerializedName("profile_image")
     @Expose
     private UserProfileImageModel userProfileImageModel;
 
-    public UserModel(String id, String name, UserProfileImageModel userProfileImageModel) {
+    public UserModel(String id, String name, String bio,String username ,UserProfileImageModel userProfileImageModel) {
         this.id = id;
         this.name = name;
+        this.bio =  bio;
+        this.username = username;
         this.userProfileImageModel = userProfileImageModel;
     }
 
@@ -60,5 +70,21 @@ public class UserModel implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(getId());
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

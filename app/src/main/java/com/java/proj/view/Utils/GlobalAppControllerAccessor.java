@@ -8,6 +8,6 @@ public class GlobalAppControllerAccessor {
     }
 
     public static GlobalAppController getInstance(Context context) {
-        return ((Provider) context.getApplicationContext()).getGlobalAppControllerInstance();
+        return ((Provider) context).getGlobalAppControllerInstance();
     }
 }

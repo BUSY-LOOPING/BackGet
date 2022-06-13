@@ -26,9 +26,6 @@ public class CollectionsResultModel {
     @Expose
     private String description;
 
-    public CollectionsResultModel() {
-        list = new ArrayList<>();
-    }
 
     public CollectionsResultModel(String id, String description, List<PreviewPhotosModel> list, UserModel userModel) {
         this.id = id;

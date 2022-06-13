@@ -21,7 +21,8 @@ import com.java.proj.view.Utils.FileReaderUtil;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LikedDataBase extends SQLiteOpenHelper {
     private static final String TAG = "mysql";
@@ -29,6 +30,7 @@ public class LikedDataBase extends SQLiteOpenHelper {
     private static final String DATABASE_TABLE_NAME = "liked_table";
     private static final String URI_MODEL_TABLE_NAME = "uri_model_table";
     private static final String USER_MODEL_TABLE_NAME = "user_model_table";
+    private static final String USER_PROFILE_IMAGE_MODEL_TABLE_NAME = "user_profile_image_table";
     private static final int DATABASE_VERSION = 1;
     private static WeakReference<LikedDataBase> mInstance = null;
     private final Context context;
@@ -72,17 +74,23 @@ public class LikedDataBase extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("drop table if exists " + DATABASE_TABLE_NAME);
         sqLiteDatabase.execSQL("drop table if exists " + URI_MODEL_TABLE_NAME);
         sqLiteDatabase.execSQL("drop table if exists " + USER_MODEL_TABLE_NAME);
+        sqLiteDatabase.execSQL("drop table if exists " + USER_PROFILE_IMAGE_MODEL_TABLE_NAME);
         onCreate(sqLiteDatabase);
     }
 
     public boolean likePicture(@NonNull String image_id,
                                @NonNull String user_model_id,
+                               @NonNull String user_model_username,
                                @NonNull String likes,
                                @NonNull String description,
                                @NonNull String user_model_name,
+                               @NonNull String user_model_bio,
                                @NonNull String regular_url,
                                @NonNull String full_url,
-                               @NonNull String raw_url) {
+                               @NonNull String raw_url,
+                               @NonNull String small_user_profile_url,
+                               @NonNull String medium_user_profile_url,
+                               @NonNull String large_user_profile_url) {
         SQLiteDatabase db = getInstance(context).getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("primary_key", image_id);
@@ -93,77 +101,102 @@ public class LikedDataBase extends SQLiteOpenHelper {
 
         contentValues.clear();
         contentValues.put("id", user_model_id);
+        contentValues.put("small", small_user_profile_url);
+        contentValues.put("medium", medium_user_profile_url);
+        contentValues.put("large", large_user_profile_url);
+        long res2 = db.insert(USER_PROFILE_IMAGE_MODEL_TABLE_NAME, null, contentValues);
+
+        contentValues.clear();
+        contentValues.put("id", user_model_id);
         contentValues.put("name", user_model_name);
-        long res2 = db.insert(USER_MODEL_TABLE_NAME, null, contentValues);
+        contentValues.put("bio", user_model_bio);
+        contentValues.put("username", user_model_username);
+        long res3 = db.insert(USER_MODEL_TABLE_NAME, null, contentValues);
 
         contentValues.clear();
         contentValues.put("image_id", image_id);
         contentValues.put("description", description);
         contentValues.put("user_model", user_model_id);
         contentValues.put("likes", likes);
-        long res3 = db.insert(DATABASE_TABLE_NAME, null, contentValues);
+        long res4 = db.insert(DATABASE_TABLE_NAME, null, contentValues);
+
         db.close();
-        return (res1 != -1 && res2 != -1 && res3 != -1);
+        return (res1 != -1 && res2 != -1 && res3 != -1 && res4 != -1);
     }
 
-    public boolean likePicture (GeneralModel model) {
+    public boolean likePicture(GeneralModel model) {
+        model.setLikes(Integer.parseInt(model.getLikes()) + 1 + "");
         model.setLiked(true);
         return likePicture(model.getImageId(),
                 model.getUserModel().getId(),
+                model.getUserModel().getUsername(),
                 model.getLikes(),
                 model.getDescription(),
                 model.getUserModel().getName(),
+                model.getUserModel().getBio(),
                 model.getUriModel().getRegular(),
                 model.getUriModel().getFull(),
-                model.getUriModel().getRaw());
+                model.getUriModel().getRaw(),
+                model.getUserModel().getUserProfileImageModel().getSmall(),
+                model.getUserModel().getUserProfileImageModel().getMedium(),
+                model.getUserModel().getUserProfileImageModel().getLarge());
     }
 
 
     public void unlikePicture(@NonNull String image_id) {
+
         SQLiteDatabase db = getInstance(context).getWritableDatabase();
 //        db.delete(DATABASE_TABLE_NAME, "image_id = ? ", new String[]{image_id});
         final String deleteQuery_1 = "DELETE FROM " + DATABASE_TABLE_NAME + " WHERE image_id = '" + image_id + "'";
         final String deleteQuery_2 = "DELETE FROM " + URI_MODEL_TABLE_NAME + " WHERE primary_key NOT IN (SELECT image_id FROM " + DATABASE_TABLE_NAME + " )";
         final String deleteQuery_3 = "DELETE FROM " + USER_MODEL_TABLE_NAME + " WHERE id NOT IN (SELECT user_model FROM " + DATABASE_TABLE_NAME + " )";
+        final String deleteQuery_4 = "DELETE FROM " + USER_PROFILE_IMAGE_MODEL_TABLE_NAME + " WHERE id NOT IN (SELECT user_model FROM " + DATABASE_TABLE_NAME + " )";
         db.execSQL(deleteQuery_1);
         db.execSQL(deleteQuery_2);
         db.execSQL(deleteQuery_3);
+        db.execSQL(deleteQuery_4);
         db.close();
     }
 
     public void unlikePicture(@NonNull GeneralModel model) {
+        model.setLikes(Integer.parseInt(model.getLikes()) - 1 + "");
         model.setLiked(false);
         unlikePicture(model.getImageId());
     }
 
     public Cursor getAllDataFromLikedTable() {
         SQLiteDatabase db = getInstance(context).getWritableDatabase();
-        Cursor cursor = db.rawQuery("select * from " + DATABASE_TABLE_NAME, null);
-        return cursor;
+        return db.rawQuery("select * from " + DATABASE_TABLE_NAME, null);
     }
 
     public Cursor getAllDataFromUserModelTable() {
         SQLiteDatabase db = getInstance(context).getWritableDatabase();
-        Cursor cursor = db.rawQuery("select * from " + USER_MODEL_TABLE_NAME, null);
-        return cursor;
+        return db.rawQuery("select * from " + USER_MODEL_TABLE_NAME, null);
     }
 
     public Cursor getAllDataFromUriModelTable() {
         SQLiteDatabase db = getInstance(context).getWritableDatabase();
-        Cursor cursor = db.rawQuery("select * from " + URI_MODEL_TABLE_NAME, null);
-        return cursor;
+        return db.rawQuery("select * from " + URI_MODEL_TABLE_NAME, null);
+    }
+
+    public Cursor getAllDataFromUserProfileModelTable() {
+        SQLiteDatabase db = getInstance(context).getWritableDatabase();
+        return db.rawQuery("select * from " + USER_PROFILE_IMAGE_MODEL_TABLE_NAME, null);
     }
 
     public Cursor getKeyDataFromUriModelTable(@NonNull String key) {
         SQLiteDatabase db = getInstance(context).getWritableDatabase();
-        Cursor cursor = db.rawQuery("select * from " + URI_MODEL_TABLE_NAME + " WHERE primary_key = '" + key + "'", null);
-        return cursor;
+        return db.rawQuery("select * from " + URI_MODEL_TABLE_NAME + " WHERE primary_key = '" + key + "'", null);
     }
 
     public Cursor getKeyDataFromUserModelTable(@NonNull String key) {
         SQLiteDatabase db = getInstance(context).getWritableDatabase();
-        Cursor cursor = db.rawQuery("select * from " + USER_MODEL_TABLE_NAME + " WHERE id = '" + key + "'", null);
-        return cursor;
+        return db.rawQuery("select * from " + USER_MODEL_TABLE_NAME + " WHERE id = '" + key + "'", null);
+    }
+
+    public Cursor getKeyDataFromUserProfileModelTable(@NonNull String key) {
+        SQLiteDatabase db = getInstance(context).getWritableDatabase();
+        return db.rawQuery("select * from " + USER_PROFILE_IMAGE_MODEL_TABLE_NAME + " WHERE id = '" + key + "'", null);
     }
 
 
@@ -187,27 +220,37 @@ public class LikedDataBase extends SQLiteOpenHelper {
         db.execSQL("PRAGMA foreign_keys=ON");
     }
 
-    public ArrayList<GeneralModel> getGeneralModelList () {
-        ArrayList<GeneralModel> list = new ArrayList<>();
+    public Map<String, GeneralModel> getGeneralModelList() {
+        Map<String, GeneralModel> hashMap = new HashMap<>();
         Cursor cursor_liked = getAllDataFromLikedTable();
         if (cursor_liked != null) {
             while (cursor_liked.moveToNext()) {
                 String image_id = cursor_liked.getString(0);
                 String user_image_id = cursor_liked.getString(2);
                 Cursor cursor_user = getKeyDataFromUserModelTable(user_image_id);
+                Cursor cursor_user_profile = getKeyDataFromUserProfileModelTable(user_image_id);
                 Cursor cursor_uri = getKeyDataFromUriModelTable(image_id);
                 cursor_user.moveToFirst();
                 cursor_uri.moveToFirst();
+                cursor_user_profile.moveToFirst();
                 @SuppressLint("Range") GeneralModel generalModel = new GeneralModel(
                         new UriModel(cursor_uri.getString(1), cursor_uri.getString(2), cursor_uri.getString(3)),
                         cursor_liked.getString(cursor_liked.getColumnIndex("image_id")),
                         cursor_liked.getString(cursor_liked.getColumnIndex("description")),
                         cursor_liked.getString(cursor_liked.getColumnIndex("likes")),
-                        new UserModel(cursor_user.getString(cursor_user.getColumnIndex("id")), cursor_user.getString(cursor_user.getColumnIndex("name")), new UserProfileImageModel("", "", "")));
-                list.add(generalModel);
+                        new UserModel(cursor_user.getString(cursor_user.getColumnIndex("id")),
+                                cursor_user.getString(cursor_user.getColumnIndex("name")),
+                                cursor_user.getString(cursor_user.getColumnIndex("bio")),
+                                cursor_user.getString(cursor_user.getColumnIndex("username")),
+                                new UserProfileImageModel(
+                                        cursor_user_profile.getString(cursor_user_profile.getColumnIndex("small")),
+                                        cursor_user_profile.getString(cursor_user_profile.getColumnIndex("medium")),
+                                        cursor_user_profile.getString(cursor_user_profile.getColumnIndex("large")))),
+                        null, true);
+                hashMap.put(generalModel.getImageId(), generalModel);
             }
             cursor_liked.close();
         }
-        return list;
+        return hashMap;
     }
 }

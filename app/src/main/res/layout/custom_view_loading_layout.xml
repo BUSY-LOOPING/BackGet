@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <variable
+            name="loadingTxt"
+            type="String" />
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/loadingLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/widget_round"
+        android:gravity="center"
+        android:minWidth="90dp"
+        android:padding="10dp"
+        android:minHeight="90dp"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <com.github.ybq.android.spinkit.SpinKitView
+            android:id="@+id/spinkit"
+            style="@style/SpinKitView.Small.CubeGrid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:SpinKit_Color="#f7b400" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/product_sans_regular"
+            android:maxLines="1"
+            android:text="@{loadingTxt}"
+            android:textColor="@color/white"
+            android:textSize="15sp" />
+
+    </LinearLayout>
+
+</layout>

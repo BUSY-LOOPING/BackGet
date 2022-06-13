@@ -11,30 +11,56 @@ import androidx.lifecycle.ViewModel;
 import com.java.proj.view.DataBase.LikedDataBase;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class LikesModel extends ViewModel {
     private static final String TAG = "MyLikesModel";
-    private MutableLiveData<List<GeneralModel>> currentLikedList;
+    private MutableLiveData<Map<String,GeneralModel>> currentLikedList;
+    private MutableLiveData<GeneralModel> lastLikedModel;
+    private MutableLiveData<GeneralModel> lastUnLikedModel;
 
     @NonNull
-    public MutableLiveData<List<GeneralModel>> getCurrentLikedList() {
+    public MutableLiveData<Map<String, GeneralModel>> getCurrentLikedList() {
         if (currentLikedList == null) {
             currentLikedList = new MutableLiveData<>();
-            currentLikedList.setValue(new ArrayList<>());
+            currentLikedList.setValue(new HashMap<>());
         }
         return currentLikedList;
     }
 
-    public void addModel(GeneralModel model) {
+    @NonNull
+    public MutableLiveData<GeneralModel> getLastLikedModel() {
+        if (lastLikedModel == null) {
+            lastLikedModel = new MutableLiveData<>();
+        }
+        return lastLikedModel;
+    }
+
+    @NonNull
+    public MutableLiveData<GeneralModel> getLastUnLikedModel() {
+        if (lastUnLikedModel == null) {
+            lastUnLikedModel = new MutableLiveData<>();
+        }
+        return lastUnLikedModel;
+    }
+
+    public void addModel(GeneralModel model, boolean notifyMainList) {
         if (getCurrentLikedList().getValue() != null) {
-            getCurrentLikedList().getValue().add(model);
+            getCurrentLikedList().getValue().put(model.getImageId(), model);
+            if (notifyMainList)
+                getCurrentLikedList().setValue(getCurrentLikedList().getValue());
+            getLastLikedModel().setValue(model);
         }
     }
 
-    public void removeModel(GeneralModel model) {
+    public void removeModel(GeneralModel model, boolean notifyMainList) {
         if (getCurrentLikedList().getValue() != null) {
-            getCurrentLikedList().getValue().remove(model);
+            getCurrentLikedList().getValue().remove(model.getImageId());
+            if (notifyMainList)
+                getCurrentLikedList().setValue(getCurrentLikedList().getValue());
+            getLastUnLikedModel().setValue(model);
         }
     }
 

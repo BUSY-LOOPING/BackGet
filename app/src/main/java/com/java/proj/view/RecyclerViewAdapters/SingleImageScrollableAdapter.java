@@ -10,22 +10,35 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.widget.NestedScrollView;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.busy.looping.like_view_library.LikeView;
 import com.busy.looping.like_view_library.OnLikeChangeListener;
 import com.google.android.material.card.MaterialCardView;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.java.proj.view.BR;
 import com.java.proj.view.CallBacks.SingleImageRecyclerViewListener;
 import com.java.proj.view.CustomRecyclerView.SingleImageRecycleView;
 import com.java.proj.view.Models.GeneralModel;
+import com.java.proj.view.Models.LikesModel;
 import com.java.proj.view.R;
+import com.java.proj.view.databinding.ImageDetailRecyclerviewItemBinding;
 import com.ortiz.touchview.OnTouchCoordinatesListener;
 import com.ortiz.touchview.TouchImageView;
 
@@ -38,23 +51,85 @@ public class SingleImageScrollableAdapter extends RecyclerView.Adapter<SingleIma
     private final SingleImageRecyclerViewListener listener;
     private SingleImageRecycleView recyclerView;
 
-    public SingleImageScrollableAdapter(Context mContext, ArrayList<GeneralModel> generalModels, Bundle bundle, SingleImageRecyclerViewListener listener, SingleImageRecycleView recyclerView) {
+    private final Observer<GeneralModel> likedObserver = new Observer<GeneralModel>() {
+        @Override
+        public void onChanged(GeneralModel model) {
+            int index = Iterables.indexOf(list,
+                    new Predicate<GeneralModel>() {
+                        @Override
+                        public boolean apply(GeneralModel input) {
+                            return input.getImageId().equals(model.getImageId());
+                        }
+                    });
+            if (index > -1) {
+//                list.get(index).setLiked(true);
+//                list.get(index).setLikes(model.getLikes());
+                if (recyclerView != null && recyclerView.findViewHolderForAdapterPosition(index) != null) {
+                    SingleImageScrollableAdapter.SingleImageScrollableAdapterViewHolder viewHolder =
+                            (SingleImageScrollableAdapterViewHolder) recyclerView.findViewHolderForAdapterPosition(index);
+                    if (viewHolder != null) {
+                        viewHolder.binding.setIsLiked(true);
+                        viewHolder.binding.setLikes(model.getLikes());
+                    }
+                }
+            }
+
+        }
+    };
+
+    private final Observer<GeneralModel> unLikedObserver = new Observer<GeneralModel>() {
+        @Override
+        public void onChanged(GeneralModel model) {
+            int index = Iterables.indexOf(list,
+                    new Predicate<GeneralModel>() {
+                        @Override
+                        public boolean apply(GeneralModel input) {
+                            return input.getImageId().equals(model.getImageId());
+                        }
+                    });
+            if (index > -1) {
+//                list.get(index).setLiked(false);
+//                list.get(index).setLikes(model.getLikes());
+                if (recyclerView != null && recyclerView.findViewHolderForAdapterPosition(index) != null) {
+                    SingleImageScrollableAdapter.SingleImageScrollableAdapterViewHolder viewHolder =
+                            (SingleImageScrollableAdapterViewHolder) recyclerView.findViewHolderForAdapterPosition(index);
+                    if (viewHolder != null) {
+                        viewHolder.binding.setIsLiked(false);
+                        viewHolder.binding.setLikes(model.getLikes());
+                    }
+                }
+            }
+        }
+    };
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        this.recyclerView = (SingleImageRecycleView) recyclerView;
+    }
+
+    public SingleImageScrollableAdapter(Context mContext, ArrayList<GeneralModel> generalModels, Bundle bundle, SingleImageRecyclerViewListener listener) {
         this.mContext = mContext;
         this.list = generalModels;
         this.bundle = bundle;
         this.listener = listener;
-        this.recyclerView = recyclerView;
+
+        LikesModel likesModel = new ViewModelProvider((ViewModelStoreOwner) mContext)
+                .get(LikesModel.class);
+        likesModel.getLastLikedModel().observe((LifecycleOwner) mContext, likedObserver);
+        likesModel.getLastUnLikedModel().observe((LifecycleOwner) mContext, unLikedObserver);
     }
 
     @NonNull
     @Override
     public SingleImageScrollableAdapterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext)
-                .inflate(R.layout.image_detail_recyclerview_item, parent, false);
+        LayoutInflater layoutInflater = LayoutInflater.from(mContext);
+        ViewDataBinding viewDataBinding = DataBindingUtil.inflate(layoutInflater, R.layout.image_detail_recyclerview_item, parent, false);
+        View view = viewDataBinding.getRoot();
         ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
         layoutParams.height = (int) (parent.getHeight() * 0.92);
         view.setLayoutParams(layoutParams);
-        return new SingleImageScrollableAdapterViewHolder(view, listener);
+        return new SingleImageScrollableAdapterViewHolder(viewDataBinding, listener);
     }
 
     @Override
@@ -73,6 +148,11 @@ public class SingleImageScrollableAdapter extends RecyclerView.Adapter<SingleIma
 
     @Override
     public void onBindViewHolder(@NonNull SingleImageScrollableAdapterViewHolder holder, int position) {
+        holder.bind(BR.likes, list.get(position).getLikes());
+        holder.bind(BR.isLiked, list.get(position).isLiked());
+        holder.bind(BR.description, list.get(position).getDescription());
+        String s = list.get(position).getUserModel().getName() + " " + mContext.getString(R.string.by_unsplash);
+        holder.binding.setByString(s);
         holder.imageView.setOnTouchCoordinatesListener(new OnTouchCoordinatesListener() {
             @Override
             public void onTouchCoordinate(@NonNull View view, @NonNull MotionEvent motionEvent, @NonNull PointF pointF) {
@@ -84,26 +164,16 @@ public class SingleImageScrollableAdapter extends RecyclerView.Adapter<SingleIma
         });
         RequestOptions requestOptions = new RequestOptions().dontAnimate().dontTransform().diskCacheStrategy(DiskCacheStrategy.ALL);
         Glide.with(mContext)
-                .asBitmap()
                 .load(list.get(position).getUriModel().getRegular())
+                .transition(DrawableTransitionOptions.withCrossFade())
                 .apply(requestOptions)
                 .into(holder.imageView);
 
         Glide.with(mContext)
                 .load(list.get(position).getUserModel().getUserProfileImageModel().getMedium())
+                .transition(DrawableTransitionOptions.withCrossFade())
                 .apply(requestOptions)
                 .into(holder.userImg);
-
-        holder.description.setText(list.get(position).getDescription());
-        holder.likeTxt.setText(list.get(position).getLikes());
-        String s = list.get(position).getUserModel().getName() + " " + mContext.getString(R.string.by_unsplash);
-        holder.byTxt.setText(s);
-
-        if (list.get(position).isLiked() && !holder.likeView.isLiked()) {
-            holder.likeView.performClick();
-        } else if (!list.get(position).isLiked() && holder.likeView.isLiked()) {
-            holder.likeView.performClick();
-        }
     }
 
     @Override
@@ -113,7 +183,7 @@ public class SingleImageScrollableAdapter extends RecyclerView.Adapter<SingleIma
         return list.size();
     }
 
-    public static class SingleImageScrollableAdapterViewHolder extends RecyclerView.ViewHolder
+    public static class SingleImageScrollableAdapterViewHolder extends BaseViewHolder
             implements View.OnClickListener, OnLikeChangeListener {
         private final TouchImageView imageView;
         private final LikeView likeView;
@@ -123,26 +193,29 @@ public class SingleImageScrollableAdapter extends RecyclerView.Adapter<SingleIma
         private final SingleImageRecyclerViewListener listener;
         private final MaterialCardView downloadBtn;
         private final LottieAnimationView downloadLottieView;
+        private ImageDetailRecyclerviewItemBinding binding;
 
-        public SingleImageScrollableAdapterViewHolder(@NonNull View itemView, SingleImageRecyclerViewListener listener) {
-            super(itemView);
+        public SingleImageScrollableAdapterViewHolder(@NonNull ViewDataBinding binding, SingleImageRecyclerViewListener listener) {
+            super(binding);
+            this.binding = (ImageDetailRecyclerviewItemBinding) binding;
             this.listener = listener;
-            likeView = itemView.findViewById(R.id.likeView);
-            imageView = itemView.findViewById(R.id.img);
-            userImg = itemView.findViewById(R.id.userImg);
-            title = itemView.findViewById(R.id.titleTxt);
-            description = itemView.findViewById(R.id.descriptionTxt);
-            likeTxt = itemView.findViewById(R.id.likeTxt);
-            byTxt = itemView.findViewById(R.id.byTxt);
-            moreBtn = itemView.findViewById(R.id.moreBtn);
-            nestedScrollView = itemView.findViewById(R.id.nestedScrollableView);
-            downloadBtn = itemView.findViewById(R.id.downloadBtn);
-            downloadLottieView = itemView.findViewById(R.id.downloadLottieView);
+            likeView = this.binding.likeView;
+            imageView = this.binding.img;
+            userImg = this.binding.userImg;
+            title = this.binding.titleTxt;
+            description = this.binding.descriptionTxt;
+            likeTxt = this.binding.likeTxt;
+            byTxt = this.binding.byTxt;
+            moreBtn = this.binding.moreBtn;
+            nestedScrollView = this.binding.nestedScrollableView;
+            downloadBtn = this.binding.downloadBtn;
+            downloadLottieView = this.binding.downloadLottieView;
             moreBtn.setOnClickListener(this);
             likeView.setOnClickListener(this);
             imageView.setOnClickListener(this);
             downloadBtn.setOnClickListener(this);
             likeView.setOnLikeChangeListener(this);
+            userImg.setOnClickListener(this);
         }
 
         @SuppressLint("NonConstantResourceId")
@@ -165,6 +238,9 @@ public class SingleImageScrollableAdapter extends RecyclerView.Adapter<SingleIma
                 case R.id.likeView:
                     likeView.onClick(likeView);
                     break;
+                case R.id.userImg:
+                    listener.onUserImgClick(getAdapterPosition());
+                    break;
             }
         }
 
@@ -172,5 +248,21 @@ public class SingleImageScrollableAdapter extends RecyclerView.Adapter<SingleIma
         public void onLikeChange(boolean isLiked) {
             listener.onLikeClick(isLiked, getAdapterPosition());
         }
+    }
+
+    public static class BaseViewHolder extends RecyclerView.ViewHolder {
+        private final ViewDataBinding binding;
+
+        public BaseViewHolder(ViewDataBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
+
+        public void bind(int id, Object obj) {
+            binding.setVariable(id, obj);
+            binding.executePendingBindings();
+        }
+
+
     }
 }

@@ -30,12 +30,13 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.java.proj.view.AppBaseFragment;
 import com.java.proj.view.R;
 import com.java.proj.view.RecyclerViewAdapters.GalleryRecyclerViewAdapter;
 
 import java.util.ArrayList;
 
-public class GalleryFragment extends Fragment {
+public class GalleryFragment extends AppBaseFragment {
     private static String TAG = "GalleryFragment";
     private static final int PERMISSION_REQUEST_CODE = 100;
     private Bundle bundle;

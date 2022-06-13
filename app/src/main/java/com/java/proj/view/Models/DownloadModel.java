@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 public class DownloadModel {
     @SerializedName("url")
     @Expose
-    String url;
+    private String url;
 
     public DownloadModel(String url) {
         this.url = url;

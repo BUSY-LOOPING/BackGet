@@ -20,3 +20,7 @@ access_token=cCOZRKGXDe_161nYM-TEZEnFmC87ifTFXpzRADHxVGM
 new acess token = access_token=vx5bIwkbNU0rvUbjiOfitt48HIE7EzJ65QzO27CwxFI
 
 access_token=UFrzZXGTKC2jJpTj4MrpZkYWhMtdTXTTgwsn2CTQTGs
+
+---------------------------------------------------------------------
+1. https://unsplash.com/oauth/authorize?client_id=1htoE7NrnRRWLcUVutfVVF2uZ2QCCo2mXOmAkGlxr_4&redirect_uri=urn:ietf:wg:oauth:2.0:oob&response_type=code&scope=public+write_likes+write_collections
+2. vS2ceiC8DFL4EsPUtRCSjLiR76z-9UqzqK2AqOz3P_s = acesss token

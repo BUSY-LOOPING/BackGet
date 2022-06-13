@@ -1,48 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainFragment.SearchFragment">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <EditText
-        android:id="@+id/searchView"
-        android:layout_width="0dp"
-        android:layout_height="35dp"
-        android:layout_marginTop="10dp"
-        android:imeOptions="actionSearch"
-        android:foreground="@drawable/search_view_bg"
-        android:background="@android:color/transparent"
-        android:drawableStart="@drawable/ic_search"
-        android:drawablePadding="5dp"
-        android:drawableTint="@color/hint"
-        android:fontFamily="@font/product_sans_regular"
-        android:hint="@string/searchBoxHint"
-        android:inputType="text|textVisiblePassword|textAutoComplete"
-        android:maxLines="1"
-        android:paddingStart="10dp"
-        android:paddingEnd="5dp"
-        android:singleLine="true"
-        android:textColor="@color/inner_tabIndicator_text"
-        android:textColorHint="@color/hint"
-        android:textCursorDrawable="@drawable/cursor_drawable"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_default="percent"
-        app:layout_constraintWidth_percent="0.9"
-        tools:targetApi="m"
-        tools:ignore="UnusedAttribute" />
+    <data>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_marginTop="10dp"
+        <import type="android.view.View" />
+
+        <variable
+            name="isLoading"
+            type="Boolean" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchView" />
+        android:layout_height="match_parent"
+        tools:context=".MainFragment.SearchFragment">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <EditText
+            android:id="@+id/searchView"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="10dp"
+            android:background="@android:color/transparent"
+            android:drawableStart="@drawable/ic_search"
+            android:drawablePadding="5dp"
+            android:drawableTint="@color/hint"
+            android:fontFamily="@font/product_sans_regular"
+            android:foreground="@drawable/search_view_bg"
+            android:hint="@string/searchBoxHint"
+            android:imeOptions="actionSearch"
+            android:inputType="text|textVisiblePassword|textAutoComplete"
+            android:maxLines="1"
+            android:paddingStart="10dp"
+            android:paddingEnd="5dp"
+            android:textColor="@color/inner_tabIndicator_text"
+            android:textColorHint="@color/hint"
+            android:textCursorDrawable="@drawable/cursor_drawable"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.9"
+            tools:ignore="UnusedAttribute"
+            tools:targetApi="m" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:overScrollMode="never"
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/searchView" />
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <include
+                android:id="@+id/loadingLayout"
+                layout="@layout/loading_layout"
+                android:visibility="@{isLoading ? View.VISIBLE : View.GONE}" />
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/centerString"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:fontFamily="@font/product_sans_regular"
+            android:text="@string/search_your_thoughts"
+            android:textColor="@color/black"
+            android:textSize="17sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

@@ -8,6 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="pink">#ff356f</color>
+    <color name="red">#D6294B</color>
     <color name="custom_separator">#A59999</color>
     <color name="orange">#ff3c68</color>
     <color name="pink2">#ff00b3</color>
@@ -15,10 +16,16 @@
     <color name="main_tab_selected">#e113a4</color>
     <color name="blue">#60bfff</color>
     <color name="gray">#bdbdbd</color>
+    <color name="green">#3EE838</color>
+    <color name="switch_on">#f8333d</color>
+    <color name="switch_off">#bdbdbd</color>
     <color name="loadingWindow">#161616</color>
     <color name="inner_custom_separator">#ffedf1</color>
     <color name="inner_tabIndicator_text">#ff3d68</color>
     <color name="searchBox">#ED5174</color>
     <color name="like">#e090a1</color>
     <color name="hint">#83FF3D68</color>
+    <color name="yellow">#FFEB3B</color>
+    <color name="brown">#FF5722</color>
+    <color name="purple">#673AB7</color>
 </resources>

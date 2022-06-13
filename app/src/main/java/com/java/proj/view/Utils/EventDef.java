@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 
 public class EventDef {
     // categories
-    @IntDef({Category.NONE, Category.IMAGE_CLICK, Category.TOOLBAR, Category.BTN})
+    @IntDef({Category.NONE, Category.IMAGE_CLICK, Category.TOOLBAR, Category.BTN, Category.LIKE_UNLIKE, Category.PERMISSION})
     @Retention(RetentionPolicy.SOURCE)
     public @interface Category {
         int NONE = 0;
@@ -15,9 +15,11 @@ public class EventDef {
         int IMAGE_CLICK = 100;
         int TOOLBAR = 101;
         int BTN = 102;
+        int LIKE_UNLIKE = 103;
+        int PERMISSION = 104;
     }
 
-    @IntDef({BUTTON_EVENTS.NONE, BUTTON_EVENTS.GALLERY_BUTTON, BUTTON_EVENTS.CUSTOM_BUTTON, BUTTON_EVENTS.LIKED_BUTTON, BUTTON_EVENTS.DOWNLOAD_BUTTON})
+    @IntDef({BUTTON_EVENTS.NONE, BUTTON_EVENTS.GALLERY_BUTTON, BUTTON_EVENTS.CUSTOM_BUTTON, BUTTON_EVENTS.LIKED_BUTTON, BUTTON_EVENTS.DOWNLOAD_BUTTON, BUTTON_EVENTS.HEART_LIKED, BUTTON_EVENTS.HEART_UNLIKED})
     @Retention(RetentionPolicy.SOURCE)
     public @interface BUTTON_EVENTS {
         int NONE = 0;
@@ -26,6 +28,9 @@ public class EventDef {
         int CUSTOM_BUTTON = 301;
         int LIKED_BUTTON = 302;
         int DOWNLOAD_BUTTON = 303;
+
+        int HEART_LIKED = 304;
+        int HEART_UNLIKED = 305;
     }
 
     @IntDef({TOOLBAR_EVENTS.SHARE_BTN, TOOLBAR_EVENTS.PRO_BTN, TOOLBAR_EVENTS.SETTINGS_BTN})
@@ -44,5 +49,34 @@ public class EventDef {
 
         int LOADING = 100;
         int NOT_LOADING = 101;
+    }
+
+    @IntDef({LIKE_UNLIKE_EVENTS.LIKED, LIKE_UNLIKE_EVENTS.UNLIKED})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface LIKE_UNLIKE_EVENTS {
+        int LIKED = 400;
+        int UNLIKED = 401;
+    }
+
+    @IntDef({PERMISSION_EVENTS.PERMISSION_GRANTED, PERMISSION_EVENTS.PERMISSION_NOT_GRANTED})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface PERMISSION_EVENTS {
+        int PERMISSION_GRANTED = 601;
+        int PERMISSION_NOT_GRANTED = 600;
+    }
+
+
+    @IntDef({DOWNLOAD_OPTIONS.download_1080, DOWNLOAD_OPTIONS.download_full})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface DOWNLOAD_OPTIONS {
+        int download_1080 = 1000;
+        int download_full = 1001;
+    }
+
+    @IntDef({REQUEST_CODES.PERMISSION_WRITE_EXTERNAL_STORAGE})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface REQUEST_CODES {
+        int PERMISSION_WRITE_EXTERNAL_STORAGE = 500;
+        int PERMISSION_MANAGE_EXTERNAL_STORAGE = 501;
     }
 }

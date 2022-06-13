@@ -11,14 +11,17 @@ public class GeneralModel extends BaseObservable implements Serializable {
     private String description;
     private UserModel userModel;
     private String likes;
-    private boolean isLiked = false;
+    private LinksModel linksModel;
+    private boolean isLiked;
 
-    public GeneralModel(UriModel uriModel, String imageId, String description, String likes, UserModel userModel) {
+    public GeneralModel(UriModel uriModel, String imageId, String description, String likes, UserModel userModel, LinksModel linksModel, boolean isLikedByUser) {
         this.uriModel = uriModel;
         this.imageId = imageId;
         this.description = description;
         this.likes = likes;
         this.userModel = userModel;
+        this.linksModel = linksModel;
+        this.isLiked = isLikedByUser;
     }
 
     public UriModel getUriModel() {
@@ -67,13 +70,14 @@ public class GeneralModel extends BaseObservable implements Serializable {
     }
 
     public void setLiked(boolean liked) {
-        if (isLiked != liked) {
-            if (isLiked)
-                likes = "" + (Integer.parseInt(likes) - 1);
-            else
-                likes = "" + (Integer.parseInt(likes) + 1);
-            isLiked = liked;
-        }
+        isLiked = liked;
+//        if (isLiked != liked) {
+//            if (isLiked)
+//                likes = "" + (Integer.parseInt(likes) - 1);
+//            else
+//                likes = "" + (Integer.parseInt(likes) + 1);
+//            isLiked = liked;
+//        }
     }
 
     @Override
@@ -82,6 +86,14 @@ public class GeneralModel extends BaseObservable implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         GeneralModel that = (GeneralModel) o;
         return getImageId().equals(that.getImageId());
+    }
+
+    public LinksModel getLinksModel() {
+        return linksModel;
+    }
+
+    public void setLinksModel(LinksModel linksModel) {
+        this.linksModel = linksModel;
     }
 
     @Override

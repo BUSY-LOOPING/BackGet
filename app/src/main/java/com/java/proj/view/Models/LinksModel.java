@@ -3,7 +3,9 @@ package com.java.proj.view.Models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class LinksModel {
+import java.io.Serializable;
+
+public class LinksModel implements Serializable {
     @SerializedName("download_location")
     @Expose
     private String downloadLocation;

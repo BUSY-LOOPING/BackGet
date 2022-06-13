@@ -15,7 +15,10 @@ import com.google.android.material.tabs.TabLayout;
 import com.java.proj.view.AppBaseFragment;
 import com.java.proj.view.InnerFragment.InnerFragmentAdapter;
 import com.java.proj.view.InnerFragment.InnerFragmentPagerAdapter;
+import com.java.proj.view.Models.GeneralModel;
 import com.java.proj.view.R;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -152,4 +155,12 @@ public class PopularFragment extends AppBaseFragment {
         return new InnerFragmentAdapter(this);
     }
 
+    @NonNull
+    @Override
+    public ArrayList<GeneralModel> getCurrentList() {
+        if (fragmentPagerAdapter.getCurrentFragment() != null) {
+            return fragmentPagerAdapter.getCurrentFragment().getCurrentList();
+        }
+        return super.getCurrentList();
+    }
 }

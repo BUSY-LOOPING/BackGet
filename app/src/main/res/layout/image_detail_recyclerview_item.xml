@@ -1,173 +1,200 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/img_parent"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginBottom="5dp"
-    android:clipChildren="false"
-    android:clipToPadding="false"
-    app:cardCornerRadius="30dp">
+<layout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <data>
+
+        <variable
+            name="likes"
+            type="String" />
+
+        <variable
+            name="isLiked"
+            type="Boolean" />
+
+        <variable
+            name="description"
+            type="String" />
+
+        <variable
+            name="byString"
+            type="String" />
+
+
+    </data>
+
+    <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/img_parent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginBottom="5dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        app:cardCornerRadius="30dp">
 
-        <com.ortiz.touchview.TouchImageView
-            android:focusableInTouchMode="true"
-            android:id="@+id/img"
-            app:zoom_enabled="true"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="match_parent">
 
-        <RelativeLayout
-            android:id="@+id/rightContainer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.92">
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/userImgContainer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                app:cardCornerRadius="100dp">
-
-                <ImageView
-                    android:id="@+id/userImg"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:scaleType="centerCrop" />
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.busy.looping.like_view_library.LikeView
-                android:id="@+id/likeView"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_below="@+id/userImgContainer"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="22dp"
-                android:tint="@color/like"
-                app:duration="300"
-                app:interpolator="FastOutLinearIn" />
-
-            <TextView
-                android:id="@+id/likeTxt"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/likeView"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="5dp"
-                android:fontFamily="@font/product_sans_bold"
-                android:text="@string/_0"
-                android:textColor="@color/white" />
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/downloadBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/likeTxt"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
-                android:backgroundTint="@color/white"
-                app:cardCornerRadius="100dp">
-
-                <com.airbnb.lottie.LottieAnimationView
-                    android:id="@+id/downloadLottieView"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
-                    android:layout_margin="8dp"
-                    app:lottie_rawRes="@raw/download_downloading_anim_lottie" />
-
-            </com.google.android.material.card.MaterialCardView>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginBottom="25dp"
-            android:animateLayoutChanges="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/rightContainer"
-            app:layout_constraintHorizontal_bias="0.08"
-            app:layout_constraintStart_toStartOf="parent">
+            <com.ortiz.touchview.TouchImageView
+                android:id="@+id/img"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:focusableInTouchMode="true"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:zoom_enabled="true" />
 
             <RelativeLayout
-                android:id="@+id/title_container"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/titleTxt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:fontFamily="@font/product_sans_bold"
-                    android:maxLines="1"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:textSize="25sp" />
-
-                <ImageView
-                    android:id="@+id/moreBtn"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_centerVertical="true"
-                    android:layout_toEndOf="@+id/titleTxt"
-                    android:src="@drawable/ic_more"
-                    app:tint="@color/white" />
-
-            </RelativeLayout>
-
-            <androidx.core.widget.NestedScrollView
-                android:id="@+id/nestedScrollableView"
+                android:id="@+id/rightContainer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/title_container"
-                android:animateLayoutChanges="true"
-                android:visibility="gone">
+                android:layout_marginEnd="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.92">
 
-                <RelativeLayout
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/userImgContainer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:animateLayoutChanges="true">
+                    android:layout_centerHorizontal="true"
+                    app:cardCornerRadius="100dp">
+
+                    <ImageView
+                        android:id="@+id/userImg"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:scaleType="centerCrop" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.busy.looping.like_view_library.LikeView
+                    app:liked="@{isLiked}"
+                    android:id="@+id/likeView"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_below="@+id/userImgContainer"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="22dp"
+                    android:tint="@color/like"
+                    app:duration="300"
+                    app:interpolator="FastOutLinearIn" />
+
+                <TextView
+                    android:id="@+id/likeTxt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/likeView"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    android:fontFamily="@font/product_sans_bold"
+                    android:text="@{likes}"
+                    android:textColor="@color/white" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/downloadBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/likeTxt"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="20dp"
+                    android:backgroundTint="@color/white"
+                    app:cardCornerRadius="100dp">
+
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/downloadLottieView"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_margin="8dp"
+                        app:lottie_rawRes="@raw/download_downloading_anim_lottie" />
+
+                </com.google.android.material.card.MaterialCardView>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginBottom="25dp"
+                android:animateLayoutChanges="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/rightContainer"
+                app:layout_constraintHorizontal_bias="0.08"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <RelativeLayout
+                    android:id="@+id/title_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
 
                     <TextView
-                        android:id="@+id/descriptionTxt"
+                        android:id="@+id/titleTxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/product_sans_regular"
+                        android:layout_marginEnd="10dp"
+                        android:fontFamily="@font/product_sans_bold"
+                        android:maxLines="1"
+                        android:text=""
                         android:textColor="@color/white"
-                        android:textSize="18sp" />
+                        android:textSize="25sp" />
 
-                    <TextView
-                        android:id="@+id/byTxt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/descriptionTxt"
-                        android:layout_marginTop="5dp"
-                        android:fontFamily="@font/product_sans_bold_italic"
-                        android:text="@string/by_unsplash"
-                        android:textColor="@color/white"
-                        android:textSize="15sp" />
+                    <ImageView
+                        android:id="@+id/moreBtn"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@+id/titleTxt"
+                        android:src="@drawable/ic_more"
+                        app:tint="@color/white" />
 
                 </RelativeLayout>
 
-            </androidx.core.widget.NestedScrollView>
+                <androidx.core.widget.NestedScrollView
+                    android:id="@+id/nestedScrollableView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/title_container"
+                    android:animateLayoutChanges="true"
+                    android:visibility="gone">
 
-        </RelativeLayout>
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:animateLayoutChanges="true">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                        <TextView
+                            android:text="@{description}"
+                            android:id="@+id/descriptionTxt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/product_sans_regular"
+                            android:textColor="@color/white"
+                            android:textSize="18sp" />
 
-</com.google.android.material.card.MaterialCardView>
+                        <TextView
+                            android:id="@+id/byTxt"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/descriptionTxt"
+                            android:layout_marginTop="5dp"
+                            android:fontFamily="@font/product_sans_bold_italic"
+                            android:text="@{byString}"
+                            android:textColor="@color/white"
+                            android:textSize="15sp" />
+
+                    </RelativeLayout>
+
+                </androidx.core.widget.NestedScrollView>
+
+            </RelativeLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+</layout>

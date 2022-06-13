@@ -1,8 +1,13 @@
 package com.java.proj.view.Models;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 public class SearchModel {
+    @SerializedName("results")
+    @Expose
     private ArrayList<ImageModel> result;
 
     public SearchModel(ArrayList<ImageModel> result) {

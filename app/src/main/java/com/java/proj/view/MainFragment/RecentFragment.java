@@ -8,22 +8,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.java.proj.view.AppBaseFragment;
+import com.java.proj.view.CallBacks.GetDataCallBack;
 import com.java.proj.view.CallBacks.RecyclerViewListener;
 import com.java.proj.view.CallBacks.ScrollCallback;
+import com.java.proj.view.DataBase.LikedDataBase;
 import com.java.proj.view.Fragments.ImageDetailFragment;
 import com.java.proj.view.MainActivity;
 import com.java.proj.view.Models.GeneralModel;
-import com.java.proj.view.Models.ImageModel;
+import com.java.proj.view.Models.LikeUnlikeModel;
+import com.java.proj.view.Models.LikesModel;
 import com.java.proj.view.R;
 import com.java.proj.view.RecyclerViewAdapters.RecyclerViewAdapter;
 import com.java.proj.view.Utils.AppEvent;
@@ -33,7 +37,6 @@ import com.java.proj.view.Utils.GlobalAppController;
 import com.java.proj.view.api.ApiUtilities;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -58,6 +61,7 @@ public class RecentFragment extends AppBaseFragment implements RecyclerViewListe
     private RecyclerViewListener listener;
     private FragmentManager fragmentManager;
     private boolean registered = false;
+    private LikesModel likesModel;
 
     private RecentFragment.AppEventReceiver receiver;
 
@@ -87,13 +91,9 @@ public class RecentFragment extends AppBaseFragment implements RecyclerViewListe
     private void handleImageClick(AppEvent event) {
         Fragment fragment = ImageDetailFragment.newInstance(event.extras);
         ImageDetailFragment.setScrollCallback(this);
-//        fragment.setSharedElementEnterTransition(new CustomTransition());
         fragment.setEnterTransition(new Fade());
         setExitTransition(new Fade());
-//        fragment.setSharedElementReturnTransition(new CustomTransition());
-//        postponeEnterTransition();
-        GlobalAppController.switchFragment(R.id.container, fragment, fragmentManager, null);
-//        GlobalAppController.switchContent(context, ImageDetailActivity.class, event.extras, (View) event.weakReferenceList.get().get(0).second, (View) event.weakReferenceList.get().get(1).second);
+        GlobalAppController.switchFragment(R.id.container, fragment, fragmentManager, null, "ImageDetailFragment");
     }
 
     public RecentFragment() {
@@ -138,19 +138,20 @@ public class RecentFragment extends AppBaseFragment implements RecyclerViewListe
     @Override
     public void onPauseInViewPager() {
         super.onPauseInViewPager();
-        eventBus().unregister(receiver);
+        eventBus(context).unregister(receiver);
         registered = false;
     }
 
     private void init(View view) {
         receiver = new AppEventReceiver(this, AppEventReceiver.FILTERS);
         listener = this;
-        fragmentManager = ((MainActivity) context).getSupportFragmentManager();
+        likesModel = new ViewModelProvider((ViewModelStoreOwner) context).get(LikesModel.class);
+        fragmentManager = ((MainActivity)context).getSupportFragmentManager();
         recyclerView = view.findViewById(R.id.recyclerView);
         list = new ArrayList<>();
         loadingLayout = view.findViewById(R.id.loadingLayout);
 //        loadingLayout.setVisibility(View.VISIBLE);
-        adapter = new RecyclerViewAdapter(context, list, listener);
+        adapter = new RecyclerViewAdapter(context, list, listener, R.layout.recycler_view_item);
     }
 
     private void setAdapter() {
@@ -184,41 +185,87 @@ public class RecentFragment extends AppBaseFragment implements RecyclerViewListe
     private void getData() {
         {
             AppEvent appEvent = new AppEvent(EventDef.CALLBACK_EVENTS.LOADING_CALLBACK, EventDef.CALLBACK_EVENTS.LOADING, 0, 0);
-            eventBus().post(appEvent);
+            eventBus(context).post(appEvent);
         }
         loadingLayout.setVisibility(View.VISIBLE);
         isLoading = true;
-        ApiUtilities.getApiInterface().getImages(page, 30, "latest")
-                .enqueue(new Callback<List<ImageModel>>() {
+        final int[] initListSize = {list.size()};
+        ApiUtilities.getListImageModel(
+                context,
+                ApiUtilities.getApiInterface().getImages(page, 30, "latest"),
+                list,
+                adapter,
+                pageSize,
+                likesModel, new GetDataCallBack() {
+
                     @Override
-                    public void onResponse(@NonNull Call<List<ImageModel>> call, @NonNull Response<List<ImageModel>> response) {
-                        if (response.body() != null) {
-                            int startIndex = list.size();
-                            for (ImageModel imageModel : response.body()) {
-                                list.add(new GeneralModel(imageModel.getUrls(), imageModel.getId(), imageModel.getDescription(), imageModel.getLikes(), imageModel.getUserModel()));
-                            }
-                            adapter.notifyItemRangeInserted(startIndex, response.body().size());
-                            loadingLayout.setVisibility(View.GONE);
-                            AppEvent appEvent1 = new AppEvent(EventDef.CALLBACK_EVENTS.LOADING_CALLBACK, EventDef.CALLBACK_EVENTS.NOT_LOADING, 0, 0);
-                            AppEvent appEvent2 = new AppEvent(EventDef.CALLBACK_EVENTS.LIST_REFRESH_CALLBACK, EventDef.CALLBACK_EVENTS.LIST_REFRESH_CALLBACK, 0, 0);
-                            appEvent2.extras.putSerializable(ImageDetailFragment.NEW_LIST, new ArrayList<>(list.subList(startIndex, list.size())));
-                            eventBus().post(appEvent2);
-                            eventBus().post(appEvent1);
+                    public void isLoading(boolean isLoading) {
+                        RecentFragment.this.isLoading = isLoading;
+                        AppEvent appEvent1;
+                        if (isLoading) {
+                            appEvent1 = new AppEvent(EventDef.CALLBACK_EVENTS.LOADING_CALLBACK, EventDef.CALLBACK_EVENTS.LOADING, 0, 0);
+                            loadingLayout.setVisibility(View.VISIBLE);
                         }
-                        isLoading = false;
-                        if (list.size() > 0) {
-                            isLastPage = list.size() < pageSize;
-                        } else isLastPage = true;
+                        else {
+                            appEvent1 = new AppEvent(EventDef.CALLBACK_EVENTS.LOADING_CALLBACK, EventDef.CALLBACK_EVENTS.NOT_LOADING, 0, 0);
+                            loadingLayout.setVisibility(View.GONE);
+                        }
+                        AppEvent appEvent2 = new AppEvent(EventDef.CALLBACK_EVENTS.LIST_REFRESH_CALLBACK, EventDef.CALLBACK_EVENTS.LIST_REFRESH_CALLBACK, initListSize[0], list.size() - initListSize[0]);
+                        eventBus(context).post(appEvent2);
+                        eventBus(context).post(appEvent1);
+                        initListSize[0] = list.size();
                     }
 
                     @Override
-                    public void onFailure(@NonNull Call<List<ImageModel>> call, @NonNull Throwable t) {
-                        Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show();
-                        loadingLayout.setVisibility(View.GONE);
-                        AppEvent appEvent = new AppEvent(EventDef.CALLBACK_EVENTS.LOADING_CALLBACK, EventDef.CALLBACK_EVENTS.NOT_LOADING, 0, 0);
-                        eventBus().post(appEvent);
+                    public void isLastPage(boolean isLastPage) {
+                        RecentFragment.this.isLastPage = isLastPage;
                     }
                 });
+
+//        ApiUtilities.getApiInterface().getImages(page, 30, "latest")
+//                .enqueue(new Callback<List<ImageModel>>() {
+//                    @Override
+//                    public void onResponse(@NonNull Call<List<ImageModel>> call, @NonNull Response<List<ImageModel>> response) {
+//                        if (response.body() != null) {
+//                            int startIndex = list.size();
+//                            for (ImageModel imageModel : response.body()) {
+//                                GeneralModel generalModel = new GeneralModel(
+//                                        imageModel.getUrls(),
+//                                        imageModel.getId(),
+//                                        imageModel.getDescription(),
+//                                        imageModel.getLikes(),
+//                                        imageModel.getUserModel(),
+//                                        imageModel.getLinksModel(),
+//                                        imageModel.isLikedByUser());
+//                                list.add(generalModel);
+//
+//                                if (likesModel.getCurrentLikedList().getValue() != null && likesModel.getCurrentLikedList().getValue().containsKey(generalModel.getImageId())) {
+//                                    likesModel.getLastLikedModel().setValue(generalModel);
+//                                }
+//                            }
+//
+//                            adapter.notifyItemRangeInserted(startIndex, response.body().size());
+//                            loadingLayout.setVisibility(View.GONE);
+//                            AppEvent appEvent1 = new AppEvent(EventDef.CALLBACK_EVENTS.LOADING_CALLBACK, EventDef.CALLBACK_EVENTS.NOT_LOADING, 0, 0);
+//                            AppEvent appEvent2 = new AppEvent(EventDef.CALLBACK_EVENTS.LIST_REFRESH_CALLBACK, EventDef.CALLBACK_EVENTS.LIST_REFRESH_CALLBACK, 0, 0);
+//                            appEvent2.extras.putSerializable(ImageDetailFragment.NEW_LIST, new ArrayList<>(list.subList(startIndex, list.size())));
+//                            eventBus(context).post(appEvent2);
+//                            eventBus(context).post(appEvent1);
+//                        }
+//                        isLoading = false;
+//                        if (list.size() > 0) {
+//                            isLastPage = list.size() < pageSize;
+//                        } else isLastPage = true;
+//                    }
+//
+//                    @Override
+//                    public void onFailure(@NonNull Call<List<ImageModel>> call, @NonNull Throwable t) {
+//                        Toast.makeText(context, "Something went wrong!", Toast.LENGTH_SHORT).show();
+//                        loadingLayout.setVisibility(View.GONE);
+//                        AppEvent appEvent = new AppEvent(EventDef.CALLBACK_EVENTS.LOADING_CALLBACK, EventDef.CALLBACK_EVENTS.NOT_LOADING, 0, 0);
+//                        eventBus(context).post(appEvent);
+//                    }
+//                });
     }
 
     @Override
@@ -233,24 +280,14 @@ public class RecentFragment extends AppBaseFragment implements RecyclerViewListe
 
     @Override
     public void onClick(int position, View container, View view) {
-        String transitionNameImgContainer = context.getString(R.string.target_img_transition_parent);
-        String transitionNameImg = context.getString(R.string.target_img_transition);
         AppEvent appEvent = new AppEvent(EventDef.Category.IMAGE_CLICK, EventDef.Category.IMAGE_CLICK, 0, 0);
-//        ArrayList<Pair<String, Object>> viewList = new ArrayList<>();
-//        viewList.add(new Pair<>(transitionNameImgContainer, container));
-//        viewList.add(new Pair<>(transitionNameImg, view));
-//        appEvent.weakReferenceList = new WeakReference<>(viewList);
-        appEvent.extras.putString(ImageDetailFragment.LOADED_URL, list.get(position).getUriModel().getRegular());
-        appEvent.extras.putSerializable(ImageDetailFragment.LIST, list);
         appEvent.extras.putInt(ImageDetailFragment.POS, position);
-        AppEventBus appEventBus = eventBus();
-        if (appEventBus != null) {
-            if (!registered) {
-                appEventBus.register(receiver);
-                registered = true;
-            }
-            appEventBus.post(appEvent);
+        AppEventBus appEventBus = eventBus(context);
+        if (!registered) {
+            appEventBus.register(receiver);
+            registered = true;
         }
+        appEventBus.post(appEvent);
         Log.d(TAG, "onClick: ");
     }
 
@@ -261,11 +298,47 @@ public class RecentFragment extends AppBaseFragment implements RecyclerViewListe
 
     @Override
     public void onLike(int position) {
+        String accessToken = context.getSharedPreferences(ApiUtilities.SHARED_PREF_NAME, Context.MODE_PRIVATE).getString(ApiUtilities.ACCESS_TOKEN, "");
+        LikedDataBase db = LikedDataBase.getInstance(context);
+        db.likePicture(list.get(position));
+        db.close();
+        likesModel.addModel(list.get(position), true);
+        ApiUtilities.getApiInterface(accessToken).likePicture(list.get(position).getImageId()).enqueue(new Callback<LikeUnlikeModel>() {
+            @Override
+            public void onResponse(@NonNull Call<LikeUnlikeModel> call, @NonNull Response<LikeUnlikeModel> response) {
+                if (response.body() != null) {
 
+                } else {
+                    Log.d("mylog", response.toString());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<LikeUnlikeModel> call, @NonNull Throwable t) {
+                Log.e("myerr", t.getLocalizedMessage());
+            }
+        });
     }
 
     @Override
     public void onUnlike(int position) {
+        LikedDataBase db = LikedDataBase.getInstance(context);
+        db.unlikePicture(list.get(position));
+        db.close();
+        likesModel.removeModel(list.get(position), true);
+        String accessToken = context.getSharedPreferences(ApiUtilities.SHARED_PREF_NAME, Context.MODE_PRIVATE).getString(ApiUtilities.ACCESS_TOKEN, "");
+        ApiUtilities.getApiInterface(accessToken).unLikePicture(list.get(position).getImageId()).enqueue(new Callback<LikeUnlikeModel>() {
+            @Override
+            public void onResponse(@NonNull Call<LikeUnlikeModel> call, @NonNull Response<LikeUnlikeModel> response) {
+                if (response.body() != null) {
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<LikeUnlikeModel> call, @NonNull Throwable t) {
+                Log.e("myerr", t.getLocalizedMessage());
+            }
+        });
 
     }
 
@@ -278,5 +351,17 @@ public class RecentFragment extends AppBaseFragment implements RecyclerViewListe
     public void onPause() {
         super.onPause();
 //        eventBus().unregister(receiver);
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "RecentFragment{}";
+    }
+
+    @NonNull
+    @Override
+    public ArrayList<GeneralModel> getCurrentList() {
+        return list;
     }
 }

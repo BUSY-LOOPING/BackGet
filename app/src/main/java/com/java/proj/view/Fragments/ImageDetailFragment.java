@@ -9,11 +9,15 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.FloatRange;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -22,25 +26,31 @@ import com.java.proj.view.AppBaseFragment;
 import com.java.proj.view.CallBacks.ScrollCallback;
 import com.java.proj.view.CallBacks.SingleImageRecyclerViewListener;
 import com.java.proj.view.CustomRecyclerView.SingleImageRecycleView;
+import com.java.proj.view.DataBase.LikedDataBase;
+import com.java.proj.view.MainActivity;
 import com.java.proj.view.Models.GeneralModel;
+import com.java.proj.view.Models.LikesModel;
 import com.java.proj.view.Popup.UtilsPopup;
 import com.java.proj.view.R;
 import com.java.proj.view.RecyclerViewAdapters.SingleImageScrollableAdapter;
 import com.java.proj.view.Utils.AppEvent;
 import com.java.proj.view.Utils.AppEventBus;
 import com.java.proj.view.Utils.EventDef;
+import com.java.proj.view.Utils.GlobalAppController;
+import com.java.proj.view.api.ApiUtilities;
 
 import java.util.ArrayList;
 
 
 public class ImageDetailFragment extends AppBaseFragment implements SingleImageRecyclerViewListener {
     public static final String BUNDLE_VAL = "ImageDetailActivityBundle";
-    public static final String LOADED_URL = "ImageDetailActivityImgUrl";
-    public static final String LIST = "ImageDetailActivityImgList";
     public static final String POS = "ImageDetailActivityImgCurrentPos";
-    public static final String NEW_LIST = "ImageDetailActivityNewListAppended";
     public static final String TAG = "ImageDetailFragment";
+
+    public static final String LIKE_UNLIKE_POS = "ImageDetailFragmentLikedUnlikedPos";
+    public static final String LIKE_UNLIKE_ID = "ImageDetailFragmentLikedUnlikedId";
     public static ScrollCallback scrollCallback;
+    private LikesModel likesModel;
 
     private Bundle bundle;
     private Context context;
@@ -86,10 +96,10 @@ public class ImageDetailFragment extends AppBaseFragment implements SingleImageR
     }
 
     private void handleRefreshCallBack(AppEvent event) {
-        ArrayList<GeneralModel> listAdded = (ArrayList<GeneralModel>) event.extras.getSerializable(NEW_LIST);
-        int startSize = list.size();
-        list.addAll(listAdded);
-        adapter.notifyItemRangeInserted(startSize, listAdded.size());
+//        ArrayList<GeneralModel> listAdded = (ArrayList<GeneralModel>) event.extras.getSerializable(NEW_LIST);
+//        int startSize = list.size();
+//        list.addAll(listAdded);
+        adapter.notifyItemRangeInserted(event.arg1, event.arg2);
     }
 
     private void handleLoadingCallBack(AppEvent event) {
@@ -141,10 +151,16 @@ public class ImageDetailFragment extends AppBaseFragment implements SingleImageR
     }
 
     private void init(View view) {
+        likesModel = new ViewModelProvider((ViewModelStoreOwner) context).get(LikesModel.class);
         appEventReceiver = new AppEventReceiver(this, AppEventReceiver.FILTERS);
-        eventBus().register(appEventReceiver);
+        eventBus(context).register(appEventReceiver);
         singleImageRecyclerViewListener = this;
-        list = (ArrayList<GeneralModel>) bundle.getSerializable(LIST);
+//        list = (ArrayList<GeneralModel>) bundle.getSerializable(LIST);
+
+        ParentFragment parentFragment = (ParentFragment) ((MainActivity)context).getSupportFragmentManager().findFragmentByTag("ParentFragment");
+        if (parentFragment != null) {
+            list = parentFragment.getCurrentList();
+        }
         pos = bundle.getInt(POS, 0);
         loadingLayout = view.findViewById(R.id.loadingLayout);
         backBtn = view.findViewById(R.id.backBtn);
@@ -153,7 +169,7 @@ public class ImageDetailFragment extends AppBaseFragment implements SingleImageR
         layoutManager = new LinearLayoutManager(context);
         recycleView.setItemViewCacheSize(3);
 
-        adapter = new SingleImageScrollableAdapter(context, list, bundle, singleImageRecyclerViewListener, recycleView);
+        adapter = new SingleImageScrollableAdapter(context, list, bundle, singleImageRecyclerViewListener);
     }
 
     public static int getAlphaFor(@FloatRange(from = 0.0f, to = 1.0f) float alpha) {
@@ -223,20 +239,54 @@ public class ImageDetailFragment extends AppBaseFragment implements SingleImageR
 
     @Override
     public void onLikeClick(boolean isLiked, int pos) {
+        String accessToken = context.getSharedPreferences(ApiUtilities.SHARED_PREF_NAME, Context.MODE_PRIVATE).getString(ApiUtilities.ACCESS_TOKEN, "");
+        LikedDataBase db = LikedDataBase.getInstance(context);
+        if (isLiked) {
+            db.likePicture(list.get(pos));
+            likesModel.addModel(list.get(pos), true);
+        }
+        else {
+            db.unlikePicture(list.get(pos));
+            likesModel.removeModel(list.get(pos), true);
+        }
+        db.close();
 
+//        AppEvent appEvent = new AppEvent(EventDef.Category.LIKE_UNLIKE, isLiked ? EventDef.LIKE_UNLIKE_EVENTS.LIKED : EventDef.LIKE_UNLIKE_EVENTS.UNLIKED, 0, 0);
+//        appEvent.extras.putInt(LIKE_UNLIKE_POS, pos);
+//        appEvent.extras.putString(LIKE_UNLIKE_ID, list.get(pos).getImageId());
+//        eventBus(context).post(appEvent);
+//        AppEvent event;
+//        if (isLiked)
+//            event = new AppEvent(EventDef.Category.BTN, EventDef.BUTTON_EVENTS.HEART_LIKED, pos, 0);
+//        else
+//            event = new AppEvent(EventDef.Category.BTN, EventDef.BUTTON_EVENTS.HEART_UNLIKED, pos, 0);
+//        eventBus(context).post(event);
     }
 
     @Override
     public void onDownloadClick(int pos) {
         Bundle bundle = new Bundle();
-        bundle.putString(UtilsPopup.DOWNLOAD_URI, list.get(pos).getUriModel().getRegular());
-        FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
+        bundle.putSerializable(UtilsPopup.GENERAL_MODEL, list.get(pos));
+        bundle.putString(GlobalAppController.ACCESS_TOKEN , getAppController(context).getAccessToken());
+        FragmentManager fragmentManager = ((MainActivity) context).getSupportFragmentManager();
         showDownloadPopup(fragmentManager, bundle);
     }
 
+    @Override
+    public void onUserImgClick(int pos) {
+        Bundle bundle = new Bundle();
+        bundle.putString(GlobalAppController.ACCESS_TOKEN, context.getSharedPreferences(ApiUtilities.SHARED_PREF_NAME, Context.MODE_PRIVATE).getString(ApiUtilities.ACCESS_TOKEN, ""));
+        bundle.putString(ProfileFragment.USER, list.get(pos).getUserModel().getUsername());
+        Fragment fragment = ProfileFragment.newInstance(bundle);
+        GlobalAppController.switchFragment(R.id.imageDetailParent, fragment, ((MainActivity) context).getSupportFragmentManager(),
+                new int[]{R.anim.slide_in_right, R.anim.slide_out_left,
+                        R.anim.slide_in_right, R.anim.slide_out_left}, "ProfileFragment");
+
+    }
+
     private void showDownloadPopup(FragmentManager fragmentManager, Bundle bundle) {
-        UtilsPopup downloadPopup = UtilsPopup.newInstance(bundle);
-        downloadPopup.show(fragmentManager, downloadPopup.getTag());
+        UtilsPopup utilsPopup = UtilsPopup.newInstance(bundle);
+        utilsPopup.show(fragmentManager, "UtilsPopup");
     }
 
     @Override
@@ -247,7 +297,13 @@ public class ImageDetailFragment extends AppBaseFragment implements SingleImageR
     @Override
     public void onDestroy() {
         super.onDestroy();
-        eventBus().unregister(appEventReceiver);
+        eventBus(context).unregister(appEventReceiver);
         scrollCallback = null;
+    }
+
+    @NonNull
+    @Override
+    public ArrayList<GeneralModel> getCurrentList() {
+        return list;
     }
 }

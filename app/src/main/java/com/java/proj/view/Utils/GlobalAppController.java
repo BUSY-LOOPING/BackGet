@@ -1,7 +1,6 @@
 package com.java.proj.view.Utils;
 
 import android.app.Activity;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,7 +17,12 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.java.proj.view.Activities.ImageDetailActivity;
+import com.java.proj.view.CallBacks.ScrollCallback;
+import com.java.proj.view.Models.GeneralModel;
 import com.java.proj.view.R;
+import com.java.proj.view.api.ApiUtilities;
+
+import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
 
@@ -26,7 +30,10 @@ public class GlobalAppController {
     private final Context context;
     private final AppEventBus appEventBus;
     private final AppEventReceiver appEventReceiver;
-    private Service holderService;
+    private GlobalAppControllerService holderService;
+
+    private String accessToken = null;
+    public static final String ACCESS_TOKEN = "AccessToken";
 
 
     public GlobalAppController(Context context, Bundle savedInstanceState) {
@@ -52,7 +59,7 @@ public class GlobalAppController {
 
     public static class AppEventReceiver extends AppEventBus.Receiver<GlobalAppController> {
         private static final int[] FILTER = new int[]{
-
+                EventDef.Category.IMAGE_CLICK
         };
 
         public AppEventReceiver(GlobalAppController holder) {
@@ -70,21 +77,13 @@ public class GlobalAppController {
     void onReceiveAppEvent(AppEvent event) {
 
         switch (event.category) {
-            case 0:
-                break;
-            case 1:
-                handleClick(event);
-                break;
-            case 2:
-                break;
+
         }
 
     }
 
-    private void handleClick(AppEvent event) {
-    }
 
-    public static void switchFragment(int id, Fragment fragment, FragmentManager fragmentManager, @Size(4) @Nullable int[] anim) {
+    public static void switchFragment(int id, Fragment fragment, FragmentManager fragmentManager, @Size(4) @Nullable int[] anim, @Nullable String tag) {
         if (!fragmentManager.isDestroyed()) {
             FragmentTransaction fragmentTransaction =
                     fragmentManager
@@ -94,7 +93,8 @@ public class GlobalAppController {
                 fragmentTransaction.setCustomAnimations(anim[0], anim[1], anim[2], anim[3]);
             }
 
-            fragmentTransaction.addToBackStack(fragment.getTag())
+
+            fragmentTransaction.addToBackStack(tag == null ? fragment.toString() : tag)
                     .add(id, fragment)
                     .commit();
         }
@@ -114,7 +114,7 @@ public class GlobalAppController {
         ActivityCompat.startActivity(context, intent, options.toBundle());
     }
 
-    public void bindHolderService(Service service) {
+    public void bindHolderService(GlobalAppControllerService service) {
         holderService = service;
     }
 
@@ -149,5 +149,22 @@ public class GlobalAppController {
         }
     }
 
+    public static void launchImageDetailFragment(@NonNull Fragment currFragment, @NonNull ScrollCallback scrollCallback, @NonNull FragmentManager fragmentManager, @NonNull ArrayList<GeneralModel> list) {
+//        Fragment fragment = ImageDetailFragment.newInstance(event.extras);
+//        ImageDetailFragment.setScrollCallback(scrollCallback);
+//        fragment.setEnterTransition(new Fade());
+//        currFragment.setExitTransition(new Fade());
+//        GlobalAppController.switchFragment(R.id.container, fragment, fragmentManager, null);
+    }
 
+
+    public String getAccessToken() {
+        if (accessToken == null)
+            accessToken = context.getSharedPreferences(ApiUtilities.SHARED_PREF_NAME, Context.MODE_PRIVATE).getString(ApiUtilities.ACCESS_TOKEN, null);
+        return accessToken;
+    }
+
+    public void setAccessToken(@Nullable String accessToken) {
+        this.accessToken = accessToken;
+    }
 }
