@@ -1,5 +1,7 @@
 package com.java.proj.view.Fragments;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
@@ -27,7 +29,9 @@ import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.viewpager.widget.ViewPager;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.airbnb.lottie.LottieComposition;
 import com.airbnb.lottie.LottieDrawable;
+import com.airbnb.lottie.LottieOnCompositionLoadedListener;
 import com.airbnb.lottie.LottieProperty;
 import com.airbnb.lottie.model.KeyPath;
 import com.airbnb.lottie.value.LottieFrameInfo;
@@ -44,14 +48,16 @@ import com.java.proj.view.R;
 import com.java.proj.view.Utils.AppEvent;
 import com.java.proj.view.Utils.AppEventBus;
 import com.java.proj.view.Utils.EventDef;
+import com.java.proj.view.Utils.FetchLikesAsyncTask;
 import com.java.proj.view.Utils.GlobalAppController;
 import com.java.proj.view.databinding.FragmentParentBinding;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class ParentFragment extends AppBaseFragment {
-    public static final String PARENT_CONTAINER = "ParentFragmentRootContainer";
+    public static final String TAG = "ParentFragmentTag";
     private Bundle bundle;
     private Context context;
     private FragmentParentBinding binding;
@@ -83,7 +89,8 @@ public class ParentFragment extends AppBaseFragment {
     public static class AppEventReceiver extends AppEventBus.Receiver<ParentFragment> {
         private static final int[] FILTER = new int[]{
                 EventDef.Category.TOOLBAR,
-                EventDef.Category.BTN
+                EventDef.Category.BTN,
+                EventDef.Category.DOWNLOAD
         };
 
         public AppEventReceiver(ParentFragment holder, int[] categoryFilter) {
@@ -149,13 +156,7 @@ public class ParentFragment extends AppBaseFragment {
 
     private void init(@NonNull View view) {
         likesModel = new ViewModelProvider((ViewModelStoreOwner) context).get(LikesModel.class);
-        LikedDataBase likedDataBase = LikedDataBase.getInstance(context);
-        Map<String, GeneralModel> map = likedDataBase.getGeneralModelList();
-        for (GeneralModel generalModel : map.values()) {
-            likesModel.getLastLikedModel().setValue(generalModel);
-        }
-        likesModel.getCurrentLikedList().setValue(map);
-        likesModel.getCurrentLikedList().observe((LifecycleOwner) context, observer);
+
         lottieAnimationView = view.findViewById(R.id.share_btn);
         download_icon = view.findViewById(R.id.download_btn_lottie);
         download_icon.addValueCallback(new KeyPath("**"),
@@ -166,11 +167,11 @@ public class ParentFragment extends AppBaseFragment {
                         return new PorterDuffColorFilter(ContextCompat.getColor(context, R.color.pink), PorterDuff.Mode.SRC_ATOP);
                     }
                 });
-        download_icon.playAnimation();
+//        download_icon.playAnimation();
         galleryBtn = view.findViewById(R.id.galleryBtn);
         customBtn = view.findViewById(R.id.customBtn);
 //        fragmentManager = getChildFragmentManager();
-        fragmentManager = ((MainActivity)context).getSupportFragmentManager();
+        fragmentManager = getChildFragmentManager();
 
 //        mainViewPager = activity.findViewById(R.id.viewPagerMain);
         mainViewPager1 = view.findViewById(R.id.viewPagerMain);
@@ -218,6 +219,10 @@ public class ParentFragment extends AppBaseFragment {
         else {
             bind(BR.total_likes, "0");
         }
+
+        FetchLikesAsyncTask fetchLikesAsyncTask = new FetchLikesAsyncTask(context, FetchLikesAsyncTask.FLAGS.POST_TO_LIKES_MODEL);
+        fetchLikesAsyncTask.execute();
+        likesModel.getCurrentLikedList().observe((LifecycleOwner) context, observer);
     }
 
     public void bind(int id, Object obj) {
@@ -272,6 +277,32 @@ public class ParentFragment extends AppBaseFragment {
                 break;
             case EventDef.Category.TOOLBAR:
                 break;
+            case EventDef.Category.DOWNLOAD:
+                handleDownloadEvents(event);
+                break;
+        }
+    }
+
+    private void handleDownloadEvents(@NonNull AppEvent appEvent) {
+        switch (appEvent.event) {
+            case EventDef.DOWNLOAD_OPTIONS.download_started:
+                if (!download_icon.isAnimating())
+                    download_icon.playAnimation();
+                download_icon.addAnimatorListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        download_icon.playAnimation();
+                    }
+                });
+                break;
+            case EventDef.DOWNLOAD_OPTIONS.download_ended:
+                download_icon.addAnimatorListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        download_icon.pauseAnimation();
+                    }
+                });
+                break;
         }
     }
 
@@ -295,11 +326,11 @@ public class ParentFragment extends AppBaseFragment {
     @Override
     public ArrayList<GeneralModel> getCurrentList() {
         FragmentManager mainFragmentManager = ((MainActivity) context).getSupportFragmentManager();
-        int index = mainFragmentManager.getBackStackEntryCount() - 1;
-        FragmentManager.BackStackEntry backEntry = mainFragmentManager.getBackStackEntryAt(index);
-        String tag = backEntry.getName();
-        Toast.makeText(context, "name = " + tag, Toast.LENGTH_SHORT).show();
-        if (mainFragmentManager.getBackStackEntryCount() > 1) {
+
+        if (mainFragmentManager.getBackStackEntryCount() > 2) {
+            int index = mainFragmentManager.getBackStackEntryCount() - 2;
+            FragmentManager.BackStackEntry backEntry = mainFragmentManager.getBackStackEntryAt(index);
+            String tag = backEntry.getName();
             AppBaseFragment fragment = (AppBaseFragment) mainFragmentManager.findFragmentByTag(tag);
             if (fragment != null) {
                 Log.d("mylog", "getCurrentList(ParentFrag): " + fragment.getCurrentList().size());

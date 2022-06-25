@@ -247,8 +247,6 @@ public class ApiUtilities {
                         Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show();
                     }
                 });
-
-
     }
 
     public static void getListImageModel(@NonNull Context context, Call<List<ImageModel>> call, ArrayList<GeneralModel> list,RecyclerView.Adapter<?> adapter ,int pageSize ,@Nullable LikesModel likesModel,@NonNull GetDataCallBack callBack) {

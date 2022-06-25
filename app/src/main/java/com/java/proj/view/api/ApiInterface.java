@@ -64,9 +64,16 @@ public interface ApiInterface {
     );
 
 
+    @Headers("Authorization: Client-ID " + API_KEY)
     @GET
     Call<DownloadModel> triggerDownload (
             @Url String url
+    );
+
+    @Headers("Authorization: Client-ID " + API_KEY)
+    @GET("photos/{id}/download")
+    Call<DownloadModel> triggerDownloadWithId (
+            @Path(value = "id", encoded = true) String id
     );
 
     @POST("/oauth/token")
@@ -95,6 +102,7 @@ public interface ApiInterface {
     @GET("me")
     Call<ProfileModel> getCurrentUser();
 
+    @Headers("Authorization: Client-ID " + API_KEY)
     @GET("/users/{username}")
     Call<ProfileModel> getUser(
             @Path(value = "username", encoded = true) String userName);
@@ -103,6 +111,9 @@ public interface ApiInterface {
     @Headers("Authorization: Client-ID " + API_KEY)
     @GET("/users/{username}/photos")
     Call<List<ImageModel>> getUserImages(
-            @Path(value = "username", encoded = true) String userName
+            @Path(value = "username", encoded = true) String userName,
+            @Query("page") int page ,
+            @Query("per_page") int perPage
+
     );
 }

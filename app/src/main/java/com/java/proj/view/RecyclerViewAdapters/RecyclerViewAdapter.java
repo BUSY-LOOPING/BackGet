@@ -2,6 +2,7 @@ package com.java.proj.view.RecyclerViewAdapters;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +36,6 @@ import com.java.proj.view.R;
 import com.java.proj.view.databinding.RecyclerViewItemBinding;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -51,6 +51,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private final Observer<GeneralModel> likedObserver = new Observer<GeneralModel>() {
         @Override
         public void onChanged(GeneralModel model) {
+            long start = System.currentTimeMillis();
             int index = Iterables.indexOf(list,
                     new Predicate<GeneralModel>() {
                         @Override
@@ -59,18 +60,26 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                         }
                     });
             if (index > -1) {
-//                list.get(index).setLiked(true);
-//                list.get(index).setLikes(model.getLikes());
-                if (recyclerView.findViewHolderForAdapterPosition(index) != null) {
-                    RecyclerViewAdapter.RecentRecyclerViewHolder viewHolder =
-                            (RecentRecyclerViewHolder) recyclerView.findViewHolderForAdapterPosition(index);
-                    if (viewHolder != null) {
-                        viewHolder.binding.setIsLiked(true);
-                        viewHolder.binding.setLikes(model.getLikes());
+                Log.d("myrecycler", "recycler view adapter onChanged");
+                if (!list.get(index).isLiked()) {
+                    list.get(index).setLiked(true);
+                    list.get(index).setLikes((Integer.parseInt(list.get(index).getLikes()) + 1) + "");
+                    if (recyclerView.findViewHolderForAdapterPosition(index) != null) {
+                        RecyclerViewAdapter.RecentRecyclerViewHolder viewHolder =
+                                (RecentRecyclerViewHolder) recyclerView.findViewHolderForAdapterPosition(index);
+                        if (viewHolder != null) {
+                            viewHolder.binding.setIsLiked(true);
+                            viewHolder.binding.setLikes(list.get(index).getLikes());
+                            Log.d("mylog", "onChanged: set likes");
+                        } else {
+                            Log.d("mylog", "onChanged: viewHolder is null");
+                        }
+                    } else {
+                        Log.d("mylog", "onChanged: findViewHolderForAdapterPosition is null");
                     }
                 }
             }
-
+            Log.d("mytime", "time: " + ((System.currentTimeMillis()) - start));
         }
     };
 
@@ -85,14 +94,23 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                         }
                     });
             if (index > -1) {
-//                list.get(index).setLiked(false);
+                if (list.get(index).isLiked()) {
+                    Log.d("myrecycler", "list element is liked ");
+                    list.get(index).setLiked(false);
 //                list.get(index).setLikes(model.getLikes());
-                if (recyclerView.findViewHolderForAdapterPosition(index) != null) {
-                    RecyclerViewAdapter.RecentRecyclerViewHolder viewHolder =
-                            (RecentRecyclerViewHolder) recyclerView.findViewHolderForAdapterPosition(index);
-                    if (viewHolder != null) {
-                        viewHolder.binding.setIsLiked(false);
-                        viewHolder.binding.setLikes(model.getLikes());
+                    list.get(index).setLikes((Integer.parseInt(list.get(index).getLikes()) - 1) + "");
+                    if (recyclerView.findViewHolderForAdapterPosition(index) != null) {
+                        Log.d("myrecycler", "findViewHolderForAdapterPosition is not null");
+                        RecyclerViewAdapter.RecentRecyclerViewHolder viewHolder =
+                                (RecentRecyclerViewHolder) recyclerView.findViewHolderForAdapterPosition(index);
+                        if (viewHolder != null) {
+                            Log.d("myrecycler", "viewHolder is not null");
+                            viewHolder.binding.setIsLiked(false);
+//                        viewHolder.binding.setLikes(model.getLikes());
+                            viewHolder.binding.setLikes(list.get(index).getLikes());
+                        }
+                    } else {
+                        Log.d("myrecycler", "findViewHolderForAdapterPosition is null");
                     }
                 }
             }
@@ -155,6 +173,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @NonNull
     @Override
     public RecentRecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        Log.d("myrecycler", "onCreateViewHolder: ");
 //        View view = LayoutInflater.from(mContext).inflate(R.layout.recycler_view_item, parent, false);
         LayoutInflater layoutInflater = LayoutInflater.from(mContext);
         ViewDataBinding view = DataBindingUtil.inflate(layoutInflater, layoutId, parent, false);

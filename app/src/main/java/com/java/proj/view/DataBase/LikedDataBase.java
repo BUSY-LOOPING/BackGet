@@ -8,6 +8,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -93,6 +94,21 @@ public class LikedDataBase extends SQLiteOpenHelper {
                                @NonNull String large_user_profile_url) {
         SQLiteDatabase db = getInstance(context).getWritableDatabase();
         ContentValues contentValues = new ContentValues();
+
+        contentValues.put("user_id", user_model_id);
+        contentValues.put("name", user_model_name);
+        contentValues.put("bio", user_model_bio);
+        contentValues.put("username", user_model_username);
+        long res3 = db.insert(USER_MODEL_TABLE_NAME, null, contentValues);
+
+        contentValues.clear();
+        contentValues.put("image_id", image_id);
+        contentValues.put("description", description);
+        contentValues.put("user_model", user_model_id);
+        contentValues.put("likes", likes);
+        long res4 = db.insert(DATABASE_TABLE_NAME, null, contentValues);
+
+        contentValues.clear();
         contentValues.put("primary_key", image_id);
         contentValues.put("regular", regular_url);
         contentValues.put("full", full_url);
@@ -106,27 +122,15 @@ public class LikedDataBase extends SQLiteOpenHelper {
         contentValues.put("large", large_user_profile_url);
         long res2 = db.insert(USER_PROFILE_IMAGE_MODEL_TABLE_NAME, null, contentValues);
 
-        contentValues.clear();
-        contentValues.put("id", user_model_id);
-        contentValues.put("name", user_model_name);
-        contentValues.put("bio", user_model_bio);
-        contentValues.put("username", user_model_username);
-        long res3 = db.insert(USER_MODEL_TABLE_NAME, null, contentValues);
 
-        contentValues.clear();
-        contentValues.put("image_id", image_id);
-        contentValues.put("description", description);
-        contentValues.put("user_model", user_model_id);
-        contentValues.put("likes", likes);
-        long res4 = db.insert(DATABASE_TABLE_NAME, null, contentValues);
 
         db.close();
         return (res1 != -1 && res2 != -1 && res3 != -1 && res4 != -1);
     }
 
     public boolean likePicture(GeneralModel model) {
-        model.setLikes(Integer.parseInt(model.getLikes()) + 1 + "");
-        model.setLiked(true);
+//        model.setLikes((Integer.parseInt(model.getLikes()) + 1) + "");
+//        model.setLiked(true);
         return likePicture(model.getImageId(),
                 model.getUserModel().getId(),
                 model.getUserModel().getUsername(),
@@ -146,21 +150,23 @@ public class LikedDataBase extends SQLiteOpenHelper {
     public void unlikePicture(@NonNull String image_id) {
 
         SQLiteDatabase db = getInstance(context).getWritableDatabase();
+        db.delete(DATABASE_TABLE_NAME, "image_id =?", new String[]{image_id});
 //        db.delete(DATABASE_TABLE_NAME, "image_id = ? ", new String[]{image_id});
-        final String deleteQuery_1 = "DELETE FROM " + DATABASE_TABLE_NAME + " WHERE image_id = '" + image_id + "'";
-        final String deleteQuery_2 = "DELETE FROM " + URI_MODEL_TABLE_NAME + " WHERE primary_key NOT IN (SELECT image_id FROM " + DATABASE_TABLE_NAME + " )";
-        final String deleteQuery_3 = "DELETE FROM " + USER_MODEL_TABLE_NAME + " WHERE id NOT IN (SELECT user_model FROM " + DATABASE_TABLE_NAME + " )";
-        final String deleteQuery_4 = "DELETE FROM " + USER_PROFILE_IMAGE_MODEL_TABLE_NAME + " WHERE id NOT IN (SELECT user_model FROM " + DATABASE_TABLE_NAME + " )";
-        db.execSQL(deleteQuery_1);
-        db.execSQL(deleteQuery_2);
+//        final String deleteQuery_1 = "DELETE FROM " + DATABASE_TABLE_NAME + " WHERE image_id = '" + image_id + "'";
+
+//        final String deleteQuery_2 = "DELETE FROM " + URI_MODEL_TABLE_NAME + " WHERE primary_key NOT IN (SELECT image_id FROM " + DATABASE_TABLE_NAME + " )";
+        final String deleteQuery_3 = "DELETE FROM " + USER_MODEL_TABLE_NAME + " WHERE user_id NOT IN (SELECT user_model FROM " + DATABASE_TABLE_NAME + " )";
+//        final String deleteQuery_4 = "DELETE FROM " + USER_PROFILE_IMAGE_MODEL_TABLE_NAME + " WHERE id NOT IN (SELECT user_model FROM " + DATABASE_TABLE_NAME + " )";
+//        db.execSQL(deleteQuery_1);
+//        db.execSQL(deleteQuery_2);
         db.execSQL(deleteQuery_3);
-        db.execSQL(deleteQuery_4);
+//        db.execSQL(deleteQuery_4);
         db.close();
     }
 
     public void unlikePicture(@NonNull GeneralModel model) {
-        model.setLikes(Integer.parseInt(model.getLikes()) - 1 + "");
-        model.setLiked(false);
+//        model.setLikes(Integer.parseInt(model.getLikes()) - 1 + "");
+//        model.setLiked(false);
         unlikePicture(model.getImageId());
     }
 
@@ -191,7 +197,7 @@ public class LikedDataBase extends SQLiteOpenHelper {
 
     public Cursor getKeyDataFromUserModelTable(@NonNull String key) {
         SQLiteDatabase db = getInstance(context).getWritableDatabase();
-        return db.rawQuery("select * from " + USER_MODEL_TABLE_NAME + " WHERE id = '" + key + "'", null);
+        return db.rawQuery("select * from " + USER_MODEL_TABLE_NAME + " WHERE user_id = '" + key + "'", null);
     }
 
     public Cursor getKeyDataFromUserProfileModelTable(@NonNull String key) {
@@ -238,7 +244,7 @@ public class LikedDataBase extends SQLiteOpenHelper {
                         cursor_liked.getString(cursor_liked.getColumnIndex("image_id")),
                         cursor_liked.getString(cursor_liked.getColumnIndex("description")),
                         cursor_liked.getString(cursor_liked.getColumnIndex("likes")),
-                        new UserModel(cursor_user.getString(cursor_user.getColumnIndex("id")),
+                        new UserModel(cursor_user.getString(cursor_user.getColumnIndex("user_id")),
                                 cursor_user.getString(cursor_user.getColumnIndex("name")),
                                 cursor_user.getString(cursor_user.getColumnIndex("bio")),
                                 cursor_user.getString(cursor_user.getColumnIndex("username")),

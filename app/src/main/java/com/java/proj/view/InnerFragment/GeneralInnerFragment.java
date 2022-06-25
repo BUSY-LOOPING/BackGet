@@ -110,36 +110,18 @@ public class GeneralInnerFragment extends AppBaseFragment implements RecyclerVie
             case EventDef.Category.IMAGE_CLICK:
                 handleImageClick(event);
                 break;
-            case EventDef.Category.BTN:
-                handleButtonClick(event);
-                break;
         }
     }
 
     private void handleImageClick(AppEvent event) {
         Log.d(TAG, "handleImageClick: general");
         Fragment fragment = ImageDetailFragment.newInstance(event.extras);
-        ImageDetailFragment.setScrollCallback(this);
+//        ImageDetailFragment.setScrollCallback(this);
         fragment.setEnterTransition(new Fade());
         setExitTransition(new Fade());
         GlobalAppController.switchFragment(R.id.container, fragment, fragmentManager, null, "ImageDetailFragment");
     }
 
-    private void handleButtonClick(AppEvent appEvent) {
-        int position = appEvent.extras.getInt("pos");
-        LikedDataBase db = LikedDataBase.getInstance(context);
-        switch (appEvent.event) {
-            case EventDef.BUTTON_EVENTS.HEART_LIKED:
-                db.likePicture(list.get(position));
-                likesModel.addModel(list.get(position), true);
-                break;
-            case EventDef.BUTTON_EVENTS.HEART_UNLIKED:
-                db.unlikePicture(list.get(position));
-                likesModel.removeModel(list.get(position), true);
-                break;
-        }
-        db.close();
-    }
 
     public GeneralInnerFragment() {
         // Required empty public constructor
@@ -297,62 +279,60 @@ public class GeneralInnerFragment extends AppBaseFragment implements RecyclerVie
 
     @Override
     public void onLike(int position) {
-//        LikesModel.InsertModelAsyncTask task = new LikesModel.InsertModelAsyncTask(context, likesModel.getCurrentLikedList());
-//        task.execute(list.get(position));
-//        Bundle bundle = new Bundle();
-//        bundle.putInt("pos", position);
-//        AppEvent event = new AppEvent(EventDef.Category.BTN, EventDef.BUTTON_EVENTS.HEART_LIKED, 0, 0);
-//        event.extras = bundle;
-//        eventBus(context).post(event);
-        String accessToken = context.getSharedPreferences(ApiUtilities.SHARED_PREF_NAME, Context.MODE_PRIVATE).getString(ApiUtilities.ACCESS_TOKEN, "");
-        LikedDataBase db = LikedDataBase.getInstance(context);
-        db.likePicture(list.get(position));
-        db.close();
-        likesModel.addModel(list.get(position), true);
-        ApiUtilities.getApiInterface(accessToken).likePicture(list.get(position).getImageId()).enqueue(new Callback<LikeUnlikeModel>() {
-            @Override
-            public void onResponse(@NonNull Call<LikeUnlikeModel> call, @NonNull Response<LikeUnlikeModel> response) {
-                if (response.body() != null) {
+        AppEvent appEvent = new AppEvent(EventDef.Category.LIKE_UNLIKE, EventDef.LIKE_UNLIKE_EVENTS.LIKED, 0, 0);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(GlobalAppController.GENERAL_MODEL, list.get(position));
+        appEvent.extras = bundle;
+        eventBus(context).post(appEvent);
 
-                } else{
-                    Log.d("mylog", response.toString());
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<LikeUnlikeModel> call, @NonNull Throwable t) {
-                Log.e("myerr", t.getLocalizedMessage());
-            }
-        });
+//        String accessToken = context.getSharedPreferences(ApiUtilities.SHARED_PREF_NAME, Context.MODE_PRIVATE).getString(ApiUtilities.ACCESS_TOKEN, "");
+//        LikedDataBase db = LikedDataBase.getInstance(context);
+//        db.likePicture(list.get(position));
+//        db.close();
+//        likesModel.addModel(list.get(position), true);
+//        ApiUtilities.getApiInterface(accessToken).likePicture(list.get(position).getImageId()).enqueue(new Callback<LikeUnlikeModel>() {
+//            @Override
+//            public void onResponse(@NonNull Call<LikeUnlikeModel> call, @NonNull Response<LikeUnlikeModel> response) {
+//                if (response.body() != null) {
+//
+//                } else{
+//                    Log.d("mylog", response.toString());
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(@NonNull Call<LikeUnlikeModel> call, @NonNull Throwable t) {
+//                Log.e("myerr", t.getLocalizedMessage());
+//            }
+//        });
 
     }
 
     @Override
     public void onUnlike(int position) {
-//        Bundle bundle = new Bundle();
-//        bundle.putInt("pos", position);
-//        AppEvent event = new AppEvent(EventDef.Category.BTN, EventDef.BUTTON_EVENTS.HEART_UNLIKED, 0, 0);
-//        event.extras = bundle;
-//        eventBus(context).post(event);
-//        LikesModel.DeleteModelAsyncTask task = new LikesModel.DeleteModelAsyncTask(context, likesModel.getCurrentLikedList());
-//        task.execute(list.get(position));
-        LikedDataBase db = LikedDataBase.getInstance(context);
-        db.unlikePicture(list.get(position));
-        db.close();
-        likesModel.removeModel(list.get(position), true);
-        String accessToken = context.getSharedPreferences(ApiUtilities.SHARED_PREF_NAME, Context.MODE_PRIVATE).getString(ApiUtilities.ACCESS_TOKEN, "");
-        ApiUtilities.getApiInterface(accessToken).unLikePicture(list.get(position).getImageId()).enqueue(new Callback<LikeUnlikeModel>() {
-            @Override
-            public void onResponse(@NonNull Call<LikeUnlikeModel> call, @NonNull Response<LikeUnlikeModel> response) {
-                if (response.body() != null) {
-                }
-            }
+        AppEvent appEvent = new AppEvent(EventDef.Category.LIKE_UNLIKE, EventDef.LIKE_UNLIKE_EVENTS.UNLIKED, 0, 0);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(GlobalAppController.GENERAL_MODEL, list.get(position));
+        appEvent.extras = bundle;
+        eventBus(context).post(appEvent);
 
-            @Override
-            public void onFailure(@NonNull Call<LikeUnlikeModel> call, @NonNull Throwable t) {
-                Log.e("myerr", t.getLocalizedMessage());
-            }
-        });
+//        LikedDataBase db = LikedDataBase.getInstance(context);
+//        db.unlikePicture(list.get(position));
+//        db.close();
+//        likesModel.removeModel(list.get(position), true);
+//        String accessToken = context.getSharedPreferences(ApiUtilities.SHARED_PREF_NAME, Context.MODE_PRIVATE).getString(ApiUtilities.ACCESS_TOKEN, "");
+//        ApiUtilities.getApiInterface(accessToken).unLikePicture(list.get(position).getImageId()).enqueue(new Callback<LikeUnlikeModel>() {
+//            @Override
+//            public void onResponse(@NonNull Call<LikeUnlikeModel> call, @NonNull Response<LikeUnlikeModel> response) {
+//                if (response.body() != null) {
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(@NonNull Call<LikeUnlikeModel> call, @NonNull Throwable t) {
+//                Log.e("myerr", t.getLocalizedMessage());
+//            }
+//        });
 
 
     }

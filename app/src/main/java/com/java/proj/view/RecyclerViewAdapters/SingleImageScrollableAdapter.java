@@ -4,13 +4,13 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.PointF;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.widget.NestedScrollView;
@@ -62,14 +62,19 @@ public class SingleImageScrollableAdapter extends RecyclerView.Adapter<SingleIma
                         }
                     });
             if (index > -1) {
+                Log.d("myrecycler", "single img recycler view adapter onChanged");
 //                list.get(index).setLiked(true);
 //                list.get(index).setLikes(model.getLikes());
                 if (recyclerView != null && recyclerView.findViewHolderForAdapterPosition(index) != null) {
                     SingleImageScrollableAdapter.SingleImageScrollableAdapterViewHolder viewHolder =
                             (SingleImageScrollableAdapterViewHolder) recyclerView.findViewHolderForAdapterPosition(index);
                     if (viewHolder != null) {
-                        viewHolder.binding.setIsLiked(true);
-                        viewHolder.binding.setLikes(model.getLikes());
+                        Log.d("mylog", "onChanged: model likes = " + model.getLikes() + "list likes = " + list.get(index).getLikes());
+                        if (!viewHolder.binding.getIsLiked()) {
+                            viewHolder.binding.setIsLiked(true);
+//                            viewHolder.binding.setLikes(model.getLikes());
+                            viewHolder.binding.setLikes(list.get(index).getLikes());
+                        }
                     }
                 }
             }
@@ -94,13 +99,79 @@ public class SingleImageScrollableAdapter extends RecyclerView.Adapter<SingleIma
                     SingleImageScrollableAdapter.SingleImageScrollableAdapterViewHolder viewHolder =
                             (SingleImageScrollableAdapterViewHolder) recyclerView.findViewHolderForAdapterPosition(index);
                     if (viewHolder != null) {
-                        viewHolder.binding.setIsLiked(false);
-                        viewHolder.binding.setLikes(model.getLikes());
+                        Log.d("mylog", "onChanged: model likes = " + model.getLikes() + "list likes = " + list.get(index).getLikes());
+                        if (viewHolder.binding.getIsLiked()) {
+                            viewHolder.binding.setIsLiked(false);
+                            viewHolder.binding.setLikes(list.get(index).getLikes());
+//                            viewHolder.binding.setLikes(model.getLikes());
+                        }
                     }
                 }
             }
         }
     };
+
+//    private final Observer<GeneralModel> likedObserver = new Observer<GeneralModel>() {
+//        @Override
+//        public void onChanged(GeneralModel model) {
+//            int index = Iterables.indexOf(list,
+//                    new Predicate<GeneralModel>() {
+//                        @Override
+//                        public boolean apply(GeneralModel input) {
+//                            return input.getImageId().equals(model.getImageId());
+//                        }
+//                    });
+//            if (index > -1) {
+//                if (!list.get(index).isLiked()) {
+//                    list.get(index).setLiked(true);
+//                    list.get(index).setLikes((Integer.parseInt(list.get(index).getLikes()) + 1) + "");
+//                    Log.d("myrecycler", "name: " + model.getUserModel().getName() + " likes = " + model.getLikes());
+//                    if (recyclerView.findViewHolderForAdapterPosition(index) != null) {
+//                        SingleImageScrollableAdapter.SingleImageScrollableAdapterViewHolder viewHolder =
+//                                (SingleImageScrollableAdapterViewHolder) recyclerView.findViewHolderForAdapterPosition(index);
+//                        if (viewHolder != null) {
+//                            viewHolder.binding.setIsLiked(true);
+//                            viewHolder.binding.setLikes(list.get(index).getLikes());
+//                            Log.d("mylog", "onChanged: set likes");
+//                        } else {
+//                            Log.d("mylog", "onChanged: viewHolder is null");
+//                        }
+//                    } else {
+//                        Log.d("mylog", "onChanged: findViewHolderForAdapterPosition is null");
+//                    }
+//                }
+//            }
+//        }
+//    };
+//
+//    private final Observer<GeneralModel> unLikedObserver = new Observer<GeneralModel>() {
+//        @Override
+//        public void onChanged(GeneralModel model) {
+//            int index = Iterables.indexOf(list,
+//                    new Predicate<GeneralModel>() {
+//                        @Override
+//                        public boolean apply(GeneralModel input) {
+//                            return input.getImageId().equals(model.getImageId());
+//                        }
+//                    });
+//            if (index > -1) {
+//                if (list.get(index).isLiked()) {
+//                    list.get(index).setLiked(false);
+////                list.get(index).setLikes(model.getLikes());
+//                    list.get(index).setLikes((Integer.parseInt(list.get(index).getLikes()) - 1) + "");
+//                    if (recyclerView != null && recyclerView.findViewHolderForAdapterPosition(index) != null) {
+//                        SingleImageScrollableAdapter.SingleImageScrollableAdapterViewHolder viewHolder =
+//                                (SingleImageScrollableAdapterViewHolder) recyclerView.findViewHolderForAdapterPosition(index);
+//                        if (viewHolder != null) {
+//                            viewHolder.binding.setIsLiked(false);
+////                        viewHolder.binding.setLikes(model.getLikes());
+//                            viewHolder.binding.setLikes(list.get(index).getLikes());
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    };
 
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
@@ -114,9 +185,15 @@ public class SingleImageScrollableAdapter extends RecyclerView.Adapter<SingleIma
         this.bundle = bundle;
         this.listener = listener;
 
+        Log.d("mylog", "SingleImageScrollableAdapter: ");
         LikesModel likesModel = new ViewModelProvider((ViewModelStoreOwner) mContext)
                 .get(LikesModel.class);
+//        likesModel.getLastLikedModel().removeObservers((LifecycleOwner) mContext);
+//        likesModel.getLastUnLikedModel().removeObservers((LifecycleOwner) mContext);
         likesModel.getLastLikedModel().observe((LifecycleOwner) mContext, likedObserver);
+
+//        likesModel.getLastLikedModel().observe(lifecycleOwner, likedObserver);
+//        likesModel.getLastUnLikedModel().observe(lifecycleOwner, unLikedObserver);
         likesModel.getLastUnLikedModel().observe((LifecycleOwner) mContext, unLikedObserver);
     }
 
@@ -181,6 +258,13 @@ public class SingleImageScrollableAdapter extends RecyclerView.Adapter<SingleIma
         if (list == null)
             return 0;
         return list.size();
+    }
+
+    public void detachObservers() {
+        LikesModel likesModel = new ViewModelProvider((ViewModelStoreOwner) mContext)
+                .get(LikesModel.class);
+        likesModel.getLastLikedModel().removeObserver(likedObserver);
+        likesModel.getLastUnLikedModel().removeObserver(unLikedObserver);
     }
 
     public static class SingleImageScrollableAdapterViewHolder extends BaseViewHolder

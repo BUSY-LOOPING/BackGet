@@ -2,6 +2,7 @@ package com.java.proj.view.RecyclerViewAdapters;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -161,6 +162,7 @@ public class StaggerredRecyclerViewAdapter extends RecyclerView.Adapter<Staggerr
 
     @Override
     public void onBindViewHolder(@NonNull StaggerredRecyclerViewHolder holder, int position) {
+        long start =  System.currentTimeMillis();
         holder.bind(BR.likes, list.get(position).getLikes());
         holder.bind(BR.isLiked, list.get(position).isLiked());
         if (list.get(position) != null) {
@@ -174,6 +176,8 @@ public class StaggerredRecyclerViewAdapter extends RecyclerView.Adapter<Staggerr
 //            holder.likeNumber.setText(list.get(position).getLikes());
             ViewCompat.setTransitionName(holder.cardView, "_card_" + position);
             ViewCompat.setTransitionName(holder.imageView, "_image_" + position);
+            long end = System.currentTimeMillis() - start;
+            Log.d("mylog", "onBindViewHolder: pos = " + position + " time : " + end);
         }
     }
 

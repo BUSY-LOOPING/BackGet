@@ -3,22 +3,20 @@ package com.java.proj.view.Fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.FloatRange;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.card.MaterialCardView;
@@ -26,7 +24,7 @@ import com.java.proj.view.AppBaseFragment;
 import com.java.proj.view.CallBacks.ScrollCallback;
 import com.java.proj.view.CallBacks.SingleImageRecyclerViewListener;
 import com.java.proj.view.CustomRecyclerView.SingleImageRecycleView;
-import com.java.proj.view.DataBase.LikedDataBase;
+import com.java.proj.view.CustomRecyclerView.WrapContentLinearLayoutManager;
 import com.java.proj.view.MainActivity;
 import com.java.proj.view.Models.GeneralModel;
 import com.java.proj.view.Models.LikesModel;
@@ -37,7 +35,6 @@ import com.java.proj.view.Utils.AppEvent;
 import com.java.proj.view.Utils.AppEventBus;
 import com.java.proj.view.Utils.EventDef;
 import com.java.proj.view.Utils.GlobalAppController;
-import com.java.proj.view.api.ApiUtilities;
 
 import java.util.ArrayList;
 
@@ -50,7 +47,7 @@ public class ImageDetailFragment extends AppBaseFragment implements SingleImageR
     public static final String LIKE_UNLIKE_POS = "ImageDetailFragmentLikedUnlikedPos";
     public static final String LIKE_UNLIKE_ID = "ImageDetailFragmentLikedUnlikedId";
     public static ScrollCallback scrollCallback;
-    private LikesModel likesModel;
+//    private LikesModel likesModel;
 
     private Bundle bundle;
     private Context context;
@@ -59,13 +56,12 @@ public class ImageDetailFragment extends AppBaseFragment implements SingleImageR
     private SingleImageRecyclerViewListener singleImageRecyclerViewListener;
 
     //views
-    private ImageView backImg;
     private SingleImageRecycleView recycleView;
     private MaterialCardView backBtn;
     private LinearLayout loadingLayout;
 
     private SingleImageScrollableAdapter adapter;
-    private LinearLayoutManager layoutManager;
+    private WrapContentLinearLayoutManager layoutManager;
 
     private AppEventReceiver appEventReceiver;
 
@@ -92,6 +88,7 @@ public class ImageDetailFragment extends AppBaseFragment implements SingleImageR
                 break;
             case EventDef.CALLBACK_EVENTS.LIST_REFRESH_CALLBACK:
                 handleRefreshCallBack(event);
+                break;
         }
     }
 
@@ -138,6 +135,7 @@ public class ImageDetailFragment extends AppBaseFragment implements SingleImageR
     @Override
     public void onResume() {
         super.onResume();
+        eventBus(context).register(appEventReceiver);
     }
 
     @Override
@@ -151,9 +149,8 @@ public class ImageDetailFragment extends AppBaseFragment implements SingleImageR
     }
 
     private void init(View view) {
-        likesModel = new ViewModelProvider((ViewModelStoreOwner) context).get(LikesModel.class);
+//        likesModel = new ViewModelProvider((ViewModelStoreOwner) context).get(LikesModel.class);
         appEventReceiver = new AppEventReceiver(this, AppEventReceiver.FILTERS);
-        eventBus(context).register(appEventReceiver);
         singleImageRecyclerViewListener = this;
 //        list = (ArrayList<GeneralModel>) bundle.getSerializable(LIST);
 
@@ -164,13 +161,13 @@ public class ImageDetailFragment extends AppBaseFragment implements SingleImageR
         pos = bundle.getInt(POS, 0);
         loadingLayout = view.findViewById(R.id.loadingLayout);
         backBtn = view.findViewById(R.id.backBtn);
-        backImg = view.findViewById(R.id.backImg);
         recycleView = view.findViewById(R.id.recyclerView);
-        layoutManager = new LinearLayoutManager(context);
+        layoutManager = new WrapContentLinearLayoutManager(context);
         recycleView.setItemViewCacheSize(3);
 
         adapter = new SingleImageScrollableAdapter(context, list, bundle, singleImageRecyclerViewListener);
     }
+
 
     public static int getAlphaFor(@FloatRange(from = 0.0f, to = 1.0f) float alpha) {
         return (int) ((alpha * 100) / 255);
@@ -239,17 +236,15 @@ public class ImageDetailFragment extends AppBaseFragment implements SingleImageR
 
     @Override
     public void onLikeClick(boolean isLiked, int pos) {
-        String accessToken = context.getSharedPreferences(ApiUtilities.SHARED_PREF_NAME, Context.MODE_PRIVATE).getString(ApiUtilities.ACCESS_TOKEN, "");
-        LikedDataBase db = LikedDataBase.getInstance(context);
-        if (isLiked) {
-            db.likePicture(list.get(pos));
-            likesModel.addModel(list.get(pos), true);
-        }
-        else {
-            db.unlikePicture(list.get(pos));
-            likesModel.removeModel(list.get(pos), true);
-        }
-        db.close();
+        AppEvent appEvent = new AppEvent(
+                EventDef.Category.LIKE_UNLIKE,
+                isLiked ? EventDef.LIKE_UNLIKE_EVENTS.LIKED : EventDef.LIKE_UNLIKE_EVENTS.UNLIKED,
+                0, 0);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(GlobalAppController.GENERAL_MODEL, list.get(pos));
+        appEvent.extras = bundle;
+        eventBus(context).post(appEvent);
+
 
 //        AppEvent appEvent = new AppEvent(EventDef.Category.LIKE_UNLIKE, isLiked ? EventDef.LIKE_UNLIKE_EVENTS.LIKED : EventDef.LIKE_UNLIKE_EVENTS.UNLIKED, 0, 0);
 //        appEvent.extras.putInt(LIKE_UNLIKE_POS, pos);
@@ -274,14 +269,17 @@ public class ImageDetailFragment extends AppBaseFragment implements SingleImageR
 
     @Override
     public void onUserImgClick(int pos) {
+//        ImageDetailFragment.scrollCallback = null;
         Bundle bundle = new Bundle();
-        bundle.putString(GlobalAppController.ACCESS_TOKEN, context.getSharedPreferences(ApiUtilities.SHARED_PREF_NAME, Context.MODE_PRIVATE).getString(ApiUtilities.ACCESS_TOKEN, ""));
+        bundle.putString(GlobalAppController.ACCESS_TOKEN, getAppController(context).getAccessToken());
         bundle.putString(ProfileFragment.USER, list.get(pos).getUserModel().getUsername());
         Fragment fragment = ProfileFragment.newInstance(bundle);
-        GlobalAppController.switchFragment(R.id.imageDetailParent, fragment, ((MainActivity) context).getSupportFragmentManager(),
+        FragmentManager fragmentManager = ((MainActivity) context).getSupportFragmentManager();
+//        FragmentManager fragmentManager = getParentFragmentManager();
+        GlobalAppController.switchFragment(R.id.container, fragment, fragmentManager,
                 new int[]{R.anim.slide_in_right, R.anim.slide_out_left,
-                        R.anim.slide_in_right, R.anim.slide_out_left}, "ProfileFragment");
-
+                        R.anim.slide_in_right, R.anim.slide_out_left}, "ProfileFragment"+ fragmentManager.getBackStackEntryCount());
+        onPause();
     }
 
     private void showDownloadPopup(FragmentManager fragmentManager, Bundle bundle) {
@@ -292,12 +290,14 @@ public class ImageDetailFragment extends AppBaseFragment implements SingleImageR
     @Override
     public void onPause() {
         super.onPause();
+        eventBus(context).unregister(appEventReceiver);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        eventBus(context).unregister(appEventReceiver);
+//        adapter.detachObservers();
+        Log.d(TAG, "onDestroy: ");
         scrollCallback = null;
     }
 

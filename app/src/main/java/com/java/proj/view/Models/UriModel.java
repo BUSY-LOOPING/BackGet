@@ -12,9 +12,11 @@ public class UriModel implements Serializable {
     @SerializedName("regular")
     @Expose
     private String regular;
+
     @SerializedName("full")
     @Expose
     private String full;
+
     @SerializedName("raw")
     @Expose
     private String raw;
