@@ -21,15 +21,14 @@
             android:layout_width="0dp"
             android:layout_height="35dp"
             android:layout_marginTop="10dp"
-            android:background="@android:color/transparent"
+            android:background="@drawable/search_view_bg"
             android:drawableStart="@drawable/ic_search"
             android:drawablePadding="5dp"
             android:drawableTint="@color/hint"
             android:fontFamily="@font/product_sans_regular"
-            android:foreground="@drawable/search_view_bg"
             android:hint="@string/searchBoxHint"
             android:imeOptions="actionSearch"
-            android:inputType="text|textVisiblePassword|textAutoComplete"
+            android:inputType="text|textAutoComplete"
             android:maxLines="1"
             android:paddingStart="10dp"
             android:paddingEnd="5dp"
@@ -45,12 +44,68 @@
             tools:ignore="UnusedAttribute"
             tools:targetApi="m" />
 
+<!--        <com.google.android.material.card.MaterialCardView-->
+<!--            android:id="@+id/searchViewContainer"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            app:layout_constraintWidth_default="percent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            android:layout_marginTop="10dp"-->
+<!--            android:backgroundTint="@color/white"-->
+<!--            app:cardCornerRadius="20dp"-->
+<!--            app:strokeWidth="2dp"-->
+<!--            app:strokeColor="@color/search_stroke"-->
+<!--            app:layout_constraintWidth_percent="0.9"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content">-->
+
+<!--        <LinearLayout-->
+<!--            android:orientation="horizontal"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:gravity="center_vertical"-->
+<!--            >-->
+
+<!--            -->
+
+<!--            <com.cjj.sva.JJSearchView-->
+<!--                android:backgroundTint="@color/pink2"-->
+<!--                android:layout_marginEnd="10dp"-->
+<!--                android:layout_weight="2"-->
+<!--                android:id="@+id/jjanimView"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="50dp"/>-->
+
+<!--            <EditText-->
+<!--                android:layout_weight="8"-->
+<!--                android:id="@+id/searchView"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="35dp"-->
+<!--                android:background="@android:color/transparent"-->
+<!--                android:fontFamily="@font/product_sans_regular"-->
+<!--                android:hint="@string/searchBoxHint"-->
+<!--                android:imeOptions="actionSearch"-->
+<!--                android:inputType="text|textAutoComplete"-->
+<!--                android:maxLines="1"-->
+<!--                android:paddingStart="0dp"-->
+<!--                android:paddingEnd="5dp"-->
+<!--                android:textColor="@color/inner_tabIndicator_text"-->
+<!--                android:textColorHint="@color/hint"-->
+<!--                android:textCursorDrawable="@drawable/cursor_drawable"-->
+<!--                android:textSize="16sp"-->
+<!--                tools:ignore="UnusedAttribute"-->
+<!--                tools:targetApi="m" />-->
+
+<!--        </LinearLayout>-->
+
+<!--        </com.google.android.material.card.MaterialCardView>-->
+
         <androidx.recyclerview.widget.RecyclerView
-            android:overScrollMode="never"
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="10dp"
+            android:overScrollMode="never"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

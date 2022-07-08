@@ -53,7 +53,7 @@
 
 
 
-    <com.java.proj.view.CustomRecyclerView.SingleImageRecycleView
+    <com.java.busylooping.backget.CustomRecyclerView.SingleImageRecycleView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"

@@ -3,6 +3,37 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/android apps/BackGet/app/src/main/res/drawable/chip_bg.xml" value="0.207" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/drawable/circular_bg.xml" value="0.2365" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/drawable/cursor_drawable.xml" value="0.207" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/drawable/custom_widget.xml" value="0.207" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/drawable/custom_widget_bottom.xml" value="0.207" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/drawable/custom_widget_small.xml" value="0.207" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/drawable/download_widget.xml" value="0.207" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/drawable/eye.xml" value="0.173" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/drawable/ic_more.xml" value="0.252" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/drawable/inner_tab_indicator.xml" value="0.207" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/drawable/search_view_bg.xml" value="0.1725" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/drawable/shadow_bottom.xml" value="0.16" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/layout/circular_bg.xml" value="0.18896964514749892" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/layout/custom_view_loading_layout.xml" value="0.129115006412997" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/layout/download_item.xml" value="0.22" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/layout/fragment_download.xml" value="0.2864471996579735" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/layout/fragment_gallery.xml" value="0.19452757588713127" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/layout/fragment_inner_general.xml" value="0.129115006412997" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/layout/fragment_likes.xml" value="0.33" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/layout/fragment_parent.xml" value="0.1" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/layout/fragment_popular.xml" value="0.1671654553227875" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/layout/fragment_profile.xml" value="0.22" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/layout/fragment_recent.xml" value="0.129115006412997" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/layout/fragment_search.xml" value="0.2864471996579735" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/layout/fragment_settings.xml" value="0.19452757588713127" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/layout/image_detail_recyclerview_item.xml" value="0.13723813595553655" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/layout/loading_layout.xml" value="0.129115006412997" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/layout/recycler_view_item.xml" value="0.1" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/layout/recycler_view_item_2.xml" value="0.2864471996579735" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/layout/recycler_view_item_likes_frag.xml" value="0.16" />
+        <entry key="..\:/android apps/BackGet/app/src/main/res/layout/recycler_view_item_likes_frag_staggered.xml" value="0.22" />
         <entry key="..\:/android apps/View/app/src/main/res/drawable/bottom_sheet_bg.xml" value="0.12447916666666667" />
         <entry key="..\:/android apps/View/app/src/main/res/drawable/cursor_drawable.xml" value="0.203125" />
         <entry key="..\:/android apps/View/app/src/main/res/drawable/custom_widget.xml" value="0.3651041666666667" />
@@ -83,5 +114,8 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="SuppressKotlinCodeStyleNotification">
+    <option name="disableForAll" value="true" />
   </component>
 </project>

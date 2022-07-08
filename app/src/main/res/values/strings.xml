@@ -1,4 +1,5 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation" tools:locale="en">
+
     <string name="app_name">BackGet</string>
     <string name="app_icon">App icon</string>
     <string name="container_below_appbar">Container below appbar</string>
@@ -29,5 +30,9 @@
     <string name="desc_share">Help BackGet grow by sharing with friends and family</string>
     <string name="log_out">Log Out</string>
     <string name="more_from_the_artist">More from the artist</string>
+    <string name="test">this is a demo string to see how the view looks. Yesssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss</string>
+    <string name="read_more">Read more</string>
+    <string name="read_less">Read less</string>
+
 
 </resources>

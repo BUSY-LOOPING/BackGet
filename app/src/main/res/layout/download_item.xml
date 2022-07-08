@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.java.busylooping.backget.utils.EventDef" />
+
+        <import type="android.content.Context" />
+
+        <import type="android.view.View" />
+
+        <import type="com.java.busylooping.backget.models.DataHolderDownloadItem" />
+
+        <import type="com.java.busylooping.backget.models.DownloadGeneralModel" />
+
+        <variable
+            name="generalDownloadModel"
+            type="com.java.busylooping.backget.models.DownloadGeneralModel" />
+
+        <variable
+            name="dataHolder"
+            type="com.java.busylooping.backget.models.DataHolderDownloadItem" />
+    </data>
+
+    <com.java.busylooping.backget.utils.ShrinkGrowMaterialCardView
+        app:strokeWidth="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:backgroundTint="@color/white"
+        android:transitionName="recycler_view_item_transition_parent"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white">
+
+            <ImageView
+                android:id="@+id/img"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_launcher_background"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <!--            <io.github.glailton.expandabletextview.ExpandableTextView-->
+            <!--                android:id="@+id/descriptionTxt"-->
+            <!--                android:layout_width="0dp"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginHorizontal="10dp"-->
+            <!--                android:layout_marginVertical="5dp"-->
+            <!--                android:autoSizeMaxTextSize="20sp"-->
+            <!--                android:autoSizeMinTextSize="12sp"-->
+            <!--                android:autoSizeTextType="uniform"-->
+            <!--                app:ellipsizeText="@string/read_more"-->
+            <!--                android:fontFamily="@font/product_sans_regular"-->
+            <!--                android:animateLayoutChanges="true"-->
+            <!--                android:text="@{generalModel.description}"-->
+            <!--                android:textColor="#222222"-->
+            <!--                android:textSize="14sp"-->
+            <!--                android:visibility="@{generalModel.description == null || generalModel.description == `` ? View.GONE : View.VISIBLE}"-->
+            <!--                app:animDuration="100"-->
+            <!--                app:collapsedLines="5"-->
+            <!--                app:ellipsizeTextColor="@color/pink2"-->
+            <!--                app:isExpanded="false"-->
+            <!--                app:layout_constraintBottom_toTopOf="@+id/linear"-->
+            <!--                app:layout_constraintEnd_toEndOf="parent"-->
+            <!--                app:layout_constraintStart_toStartOf="parent"-->
+            <!--                app:layout_constraintTop_toBottomOf="@+id/img"-->
+            <!--                app:readLessText="@string/read_less"-->
+            <!--                app:readMoreText="@string/read_more"-->
+            <!--                app:textMode="line"-->
+            <!--                tools:targetApi="o" />-->
+
+            <TextView
+                android:id="@+id/descriptionTxt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="5dp"
+                android:autoSizeMaxTextSize="20sp"
+                android:autoSizeMinTextSize="12sp"
+                android:autoSizeTextType="uniform"
+                android:fontFamily="@font/product_sans_regular"
+                android:text="@{generalDownloadModel.description}"
+                android:textColor="#222222"
+                android:textSize="14sp"
+                android:visibility="@{generalDownloadModel.description == null || generalDownloadModel.description == `` ? View.GONE : View.VISIBLE}"
+                app:ellipsizeText="@string/read_more"
+                app:ellipsizeTextColor="@color/pink2"
+                app:isExpanded="false"
+                app:layout_constraintBottom_toTopOf="@+id/linear"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/img"
+                tools:targetApi="o" />
+
+
+            <!--            <com.ctetin.expandabletextviewlibrary.ExpandableTextView-->
+            <!--                android:id="@+id/descriptionTxt"-->
+            <!--                android:layout_width="0dp"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginHorizontal="10dp"-->
+            <!--                android:layout_marginVertical="5dp"-->
+            <!--                android:autoSizeMaxTextSize="20sp"-->
+            <!--                android:autoSizeMinTextSize="12sp"-->
+            <!--                android:autoSizeTextType="uniform"-->
+            <!--                android:breakStrategy="balanced"-->
+            <!--                android:fontFamily="@font/product_sans_regular"-->
+            <!--                android:text="@{generalModel.description}"-->
+            <!--                android:textColor="#222222"-->
+            <!--                android:textSize="14sp"-->
+            <!--                android:visibility="@{generalModel.description == null || generalModel.description == `` ? View.GONE : View.VISIBLE}"-->
+            <!--                app:layout_constraintBottom_toTopOf="@+id/linear"-->
+            <!--                app:layout_constraintEnd_toEndOf="parent"-->
+            <!--                app:layout_constraintStart_toStartOf="parent"-->
+            <!--                app:layout_constraintTop_toBottomOf="@+id/img"-->
+            <!--                app:ep_max_line="5"-->
+            <!--                app:ep_need_animation="true"-->
+            <!--                app:ep_need_contract="true"-->
+            <!--                tools:targetApi="o" />-->
+
+            <!--            <LinearLayout-->
+            <!--                android:visibility="gone"-->
+            <!--                android:id="@+id/viewsContainer"-->
+            <!--                app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--                app:layout_constraintStart_toEndOf="@+id/cardView"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:gravity="center_vertical"-->
+            <!--                android:layout_marginStart="10dp"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:orientation="horizontal">-->
+
+            <!--                <ImageView-->
+            <!--                    android:layout_width="30dp"-->
+            <!--                    android:layout_height="30dp"-->
+            <!--                    android:rotation="5"-->
+            <!--                    android:src="@drawable/eye"-->
+            <!--                    app:tint="@color/tintBase" />-->
+
+            <!--                <TextView-->
+            <!--                    android:layout_marginStart="10dp"-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:textSize="15sp"-->
+            <!--                    android:text="@{generalModel.views}"-->
+            <!--                    android:fontFamily="@font/product_sans_italic"-->
+            <!--                    android:textColor="@color/tintBase"/>-->
+
+            <!--            </LinearLayout>-->
+
+            <LinearLayout
+                android:id="@+id/linear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="top"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/descriptionTxt">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+
+                    <com.busy.looping.like_view_library.LikeView
+                        android:id="@+id/likeBtn"
+                        android:layout_width="33dp"
+                        android:layout_height="33dp"
+                        android:padding="3dp"
+                        app:duration="300"
+                        app:interpolator="FastOutLinearIn"
+                        app:liked="@{generalDownloadModel.liked}"
+                        app:tint="@color/pink" />
+
+                    <TextView
+                        android:id="@+id/likeNumber"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/product_sans_regular"
+                        android:text="@{generalDownloadModel.liked ? (Integer.parseInt(generalDownloadModel.likes) + 1) + `` : generalDownloadModel.likes}"
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
+
+                </LinearLayout>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:strokeWidth="0dp"
+                    android:layout_marginStart="5dp"
+                    android:backgroundTint="@color/white"
+                    app:cardCornerRadius="5dp"
+                    app:cardElevation="0dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@{dataHolder.backgroundRef}"
+                        android:fontFamily="@font/product_sans_regular"
+                        android:maxLines="1"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="5dp"
+                        android:text="@{dataHolder.downloadRes}"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <!--                <com.airbnb.lottie.LottieAnimationView-->
+                <!--                    android:id="@+id/downloadBtn"-->
+                <!--                    android:layout_width="37dp"-->
+                <!--                    android:layout_height="37dp"-->
+                <!--                    android:layout_marginStart="10dp"-->
+                <!--                    android:background="@drawable/circular_bg"-->
+                <!--                    android:padding="7dp"-->
+                <!--                    app:lottie_autoPlay="false"-->
+                <!--                    app:lottie_rawRes="@raw/download_downloading_anim_lottie" />-->
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:id="@+id/divider"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="10dp"
+                android:orientation="horizontal"
+                app:dividerColor="@color/stroke2"
+                app:dividerInsetEnd="10dp"
+                app:dividerInsetStart="10dp"
+                app:dividerThickness="1dp"
+                app:layout_constraintBottom_toTopOf="@+id/bottomSection"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linear" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/bottomSection"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/divider">
+
+
+                <!--                <androidx.cardview.widget.CardView-->
+                <!--                    android:id="@+id/artistImgCardView"-->
+                <!--                    android:layout_width="wrap_content"-->
+                <!--                    android:layout_height="wrap_content"-->
+                <!--                    android:backgroundTint="@color/white"-->
+                <!--                    app:cardCornerRadius="100dp"-->
+                <!--                    app:layout_constraintStart_toStartOf="parent"-->
+                <!--                    app:layout_constraintTop_toTopOf="parent">-->
+
+                <!--                    <ImageView-->
+                <!--                        android:id="@+id/artistImg"-->
+                <!--                        android:layout_width="40dp"-->
+                <!--                        android:layout_height="40dp"-->
+                <!--                        android:scaleType="centerCrop" />-->
+
+                <!--                </androidx.cardview.widget.CardView>-->
+
+                <TextView
+                    android:id="@+id/savedName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:autoSizeMaxTextSize="20sp"
+
+                    android:autoSizeMinTextSize="12sp"
+                    android:autoSizeTextType="uniform"
+                    android:breakStrategy="balanced"
+                    android:fontFamily="@font/product_sans_regular"
+                    android:gravity="start"
+                    android:maxLines="2"
+                    android:text="@{dataHolder.name}"
+                    android:textColor="@color/black"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:targetApi="o" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/savedName">
+
+                    <TextView
+                        android:id="@+id/savedPath"
+                        android:layout_marginVertical="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:breakStrategy="balanced"
+                        android:fontFamily="@font/product_sans_regular"
+                        android:gravity="start"
+                        android:text="@{dataHolder.location}"
+                        android:textColor="@color/tintBase"
+                        android:textSize="15sp"
+                        tools:targetApi="o" />
+
+                    <!--                <com.ms.square.android.expandabletextview.ExpandableTextView-->
+                    <!--                    android:id="@+id/artistBioTxtContainer"-->
+                    <!--                    android:layout_width="match_parent"-->
+                    <!--                    android:layout_height="wrap_content"-->
+                    <!--                    android:layout_marginTop="10dp"-->
+                    <!--                    android:text="@{generalDownloadModel.userModel.bio}"-->
+                    <!--                    android:visibility="@{generalDownloadModel.userModel.bio == null || generalDownloadModel.userModel.bio == `` ? View.GONE : View.VISIBLE}"-->
+                    <!--                    app:animDuration="250"-->
+                    <!--                    app:layout_constraintEnd_toEndOf="parent"-->
+                    <!--                    app:layout_constraintStart_toStartOf="parent"-->
+                    <!--                    app:layout_constraintTop_toBottomOf="@+id/artistImgCardView"-->
+                    <!--                    app:maxCollapsedLines="5">-->
+
+                    <!--                    <TextView-->
+                    <!--                        android:id="@+id/expandable_text"-->
+                    <!--                        android:layout_width="match_parent"-->
+                    <!--                        android:layout_height="wrap_content"-->
+                    <!--                        android:ellipsize="end"-->
+                    <!--                        android:fontFamily="@font/product_sans_regular"-->
+                    <!--                        android:minHeight="0dp"-->
+                    <!--                        android:textColor="#222222"-->
+                    <!--                        android:textSize="15sp" />-->
+
+
+                    <!--                    &lt;!&ndash; expandable ImageButton &ndash;&gt;-->
+                    <!--                    <ImageButton-->
+                    <!--                        android:id="@id/expand_collapse"-->
+                    <!--                        android:layout_width="wrap_content"-->
+                    <!--                        android:layout_height="wrap_content"-->
+                    <!--                        android:layout_gravity="end|bottom"-->
+                    <!--                        android:background="@android:color/transparent"-->
+                    <!--                        android:padding="16dp"-->
+                    <!--                        android:src="@drawable/ic_more"-->
+                    <!--                        app:tint="@color/black" />-->
+
+                    <!--                </com.ms.square.android.expandabletextview.ExpandableTextView>-->
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:autoSizeMaxTextSize="16sp"
+                            android:autoSizeMinTextSize="10sp"
+                            android:autoSizeTextType="uniform"
+                            android:fontFamily="@font/product_sans_regular"
+                            android:maxLines="1"
+                            android:text="@{dataHolder.date}"
+                            android:textColor="@color/gray"
+                            android:textIsSelectable="false"
+                            android:textSize="13sp"
+                            android:textStyle="italic"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:targetApi="o" />
+
+                        <TextView
+                            android:id="@+id/size"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:autoSizeMaxTextSize="16sp"
+                            android:autoSizeMinTextSize="10sp"
+                            android:autoSizeTextType="uniform"
+                            android:fontFamily="@font/product_sans_regular"
+                            android:maxLines="1"
+                            android:text="@{dataHolder.size}"
+                            android:textColor="@color/gray"
+                            android:textIsSelectable="false"
+                            android:textSize="13sp"
+                            android:textStyle="italic"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            tools:targetApi="o" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </LinearLayout>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.java.busylooping.backget.utils.ShrinkGrowMaterialCardView>
+
+
+</layout>

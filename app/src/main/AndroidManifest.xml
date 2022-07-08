@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.java.proj.view">
+    package="com.java.busylooping.backget">
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -16,9 +16,10 @@
         android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
 
+    <uses-permission android:name="com.google.android.c2dm.permission.Reciever"/>
 
     <application
-        android:name=".ApplicationClass"
+        android:name="com.java.busylooping.backget.ApplicationClass"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -28,11 +29,11 @@
         android:theme="@style/Theme.View"
         tools:ignore="AllowBackup">
         <activity
-            android:name=".Activities.ImageDetailActivity"
+            android:name="com.java.busylooping.backget.Activities.ImageDetailActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name="com.java.busylooping.backget.MainActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:exported="true"
             android:resizeableActivity="true"
@@ -59,8 +60,20 @@
         </activity>
 
         <service
-            android:name=".Utils.GlobalAppControllerService"
+            android:name="com.java.busylooping.backget.utils.GlobalAppControllerService"
             android:enabled="true" />
+
+        <service android:name=".utils.FireBaseService"
+            android:permission="com.google.android.c2dm.permission.send"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.android.c2dm.intent.Recieve"/>
+
+            </intent-filter>
+        </service>
+
     </application>
 
 

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingHorizontal="5dp">
+
+        <LinearLayout
+            android:id="@+id/topContainer"
+            android:layout_marginHorizontal="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.card.MaterialCardView
+                app:cardElevation="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/white"
+                app:cardCornerRadius="5dp"
+                app:strokeColor="@color/inner_tabIndicator_text"
+                app:strokeWidth="2dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <!-- INPUT -->
+                    <EditText
+                        android:textCursorDrawable="@drawable/cursor_drawable"
+                        android:id="@+id/searchEt"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="10dp"
+                        android:layout_toEndOf="@+id/icon"
+                        android:background="@android:color/transparent"
+                        android:fontFamily="@font/product_sans_regular"
+                        android:hint="Search"
+                        android:imeOptions="actionSearch"
+                        android:inputType="text|textAutoComplete"
+                        android:maxLines="1"
+                        android:padding="10dp"
+                        android:textColor="@color/inner_tabIndicator_text"
+                        android:textColorHint="@color/hint"
+                        android:textSize="19sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/divider"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <!-- ICON -->
+                    <com.cjj.sva.JJSearchView
+                        android:id="@+id/icon"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_marginStart="10dp"
+                        android:padding="3dp"
+                        android:src="@drawable/ic_search"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/hint" />
+
+                    <com.google.android.material.divider.MaterialDivider
+                        android:id="@+id/divider"
+                        android:layout_width="1dp"
+                        android:layout_height="0dp"
+                        android:orientation="vertical"
+                        app:dividerColor="@color/hint"
+                        android:layout_marginHorizontal="10dp"
+                        app:layout_constraintHeight_percent="0.7"
+                        app:layout_constraintEnd_toStartOf="@+id/searchEt"
+                        app:layout_constraintHeight_default="percent"
+                        app:dividerInsetEnd="5dp"
+                        app:dividerInsetStart="5dp"
+                        app:dividerThickness="1dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/icon"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <com.google.android.material.chip.ChipGroup
+                android:backgroundTint="@color/white"
+                android:id="@+id/chipGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="10dp">
+
+                <com.google.android.material.chip.Chip
+                    app:closeIconEnabled="true"
+                    app:closeIconTint="@color/chip_text_bg"
+                    app:closeIconSize="20dp"
+                    android:id="@+id/chip"
+                    style="@style/Widget.App.Chip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="false"
+                    android:text="chip sadadad"
+                    app:ensureMinTouchTargetSize="true" />
+
+            </com.google.android.material.chip.ChipGroup>
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:overScrollMode="never"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/topContainer" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

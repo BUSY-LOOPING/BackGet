@@ -23,25 +23,13 @@
         android:focusable="true"
         tools:context=".Fragments.SettingsFragment">
 
-        <TextView
-            android:id="@+id/settingsTxt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
-            android:fontFamily="@font/product_sans_bold"
-            android:text="@string/settings"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <ScrollView
+            android:id="@+id/scrollView"
             android:overScrollMode="never"
             app:layout_constraintVertical_bias="0"
             android:layout_marginTop="10dp"
             app:layout_constraintBottom_toTopOf="@+id/bottomTxt"
-            app:layout_constraintTop_toBottomOf="@+id/settingsTxt"
+            app:layout_constraintTop_toTopOf="parent"
             android:layout_marginHorizontal="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">

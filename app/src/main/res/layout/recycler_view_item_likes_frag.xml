@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="com.java.busylooping.backget.models.GeneralModel"/>
+        <variable
+            name="generalModel"
+            type="com.java.busylooping.backget.models.GeneralModel" />
+    </data>
+
+    <com.java.busylooping.backget.utils.ShrinkGrowMaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="@color/white"
+        android:transitionName="recycler_view_item_transition_parent"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="5dp"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingVertical="10dp"
+            android:background="@color/white">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:backgroundTint="@color/white"
+                app:cardCornerRadius="10dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="0.73:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_default="percent"
+                app:layout_constraintHeight_percent="0.80"
+                app:layout_constraintHorizontal_bias="0.05"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/img"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop" />
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/artistTxt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:autoSizeMaxTextSize="20sp"
+                android:autoSizeMinTextSize="12sp"
+                android:autoSizeTextType="uniform"
+                android:fontFamily="@font/product_sans_regular"
+                android:maxLines="1"
+                android:text="@{`- ` + generalModel.profileModel.name}"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/linear"
+                app:layout_constraintStart_toEndOf="@+id/cardView"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:targetApi="o" />
+
+
+            <TextView
+                android:id="@+id/descriptionTxt"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="5dp"
+                android:autoSizeMaxTextSize="20sp"
+                android:autoSizeMinTextSize="12sp"
+                android:autoSizeTextType="uniform"
+                android:breakStrategy="balanced"
+                android:ellipsize="end"
+                android:fontFamily="@font/product_sans_regular"
+                android:text="@{generalModel.description}"
+                android:textColor="#979494"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toTopOf="@+id/viewsContainer"
+                app:layout_constraintEnd_toStartOf="@+id/linear"
+                app:layout_constraintStart_toEndOf="@+id/cardView"
+                app:layout_constraintTop_toBottomOf="@+id/artistTxt"
+                app:layout_constraintVertical_bias="0"
+                tools:targetApi="o" />
+
+            <LinearLayout
+                android:visibility="gone"
+                android:id="@+id/viewsContainer"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/cardView"
+                android:layout_width="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginStart="10dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:rotation="5"
+                    android:src="@drawable/eye"
+                    app:tint="@color/tintBase" />
+
+                <TextView
+                    android:layout_marginStart="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="15sp"
+                    android:text="@{generalModel.views}"
+                    android:fontFamily="@font/product_sans_italic"
+                    android:textColor="@color/tintBase"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+
+                <com.busy.looping.like_view_library.LikeView
+                    android:id="@+id/likeBtn"
+                    android:layout_width="33dp"
+                    android:layout_height="33dp"
+                    android:padding="3dp"
+                    app:duration="300"
+                    app:interpolator="FastOutLinearIn"
+                    app:liked="@{generalModel.liked}"
+                    app:tint="@color/pink" />
+
+                <TextView
+                    android:id="@+id/likeNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/product_sans_regular"
+                    android:text="@{generalModel.likes}"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/downloadBtn"
+                    android:layout_width="37dp"
+                    android:layout_height="37dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/circular_bg"
+                    android:padding="7dp"
+                    app:lottie_autoPlay="false"
+                    app:lottie_rawRes="@raw/download_downloading_anim_lottie" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.java.busylooping.backget.utils.ShrinkGrowMaterialCardView>
+
+
+</layout>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.View" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.View" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
@@ -16,6 +16,7 @@
         <!--         Important to draw through the cutouts-->
         <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
         <item name="android:windowContentTransitions">true</item>
+        <item name="chipStyle">@style/Widget.App.Chip</item>
 <!--        <item name="android:windowFullscreen">false</item>-->
 <!--        <item name="android:windowContentOverlay">@null</item>-->
 <!--        <item name="android:fitsSystemWindows">false</item>-->
@@ -127,5 +128,37 @@
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/pink</item>
         <item name="fontFamily">@font/product_sans_regular</item>
+    </style>
+
+    <!--    Chip style-->
+    <style name="Widget.App.Chip" parent="@style/Widget.Material3.Chip.Filter">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.Chip</item>
+        <item name="android:textAppearance">@style/TextAppearance.App.BodyMedium</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.App.SmallComponent</item>
+
+        <item name="closeIconEnabled">true</item>
+        <item name="closeIconSize">20dp</item>
+        <item name="closeIconTint">@color/chip_text_bg</item>
+        <item name="android:textColor">@color/chip_text_bg</item>
+        <item name="chipIconTint">@color/chip_text_bg</item>
+        <item name="chipBackgroundColor">@color/chip_bg</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="chipStrokeColor">@color/chipBgColorSelected</item>
+        <item name="checkedIconVisible">true</item>
+        <item name="chipIconSize">20dp</item>
+    </style>
+
+    <style name="ThemeOverlay.App.Chip" parent="">
+        <item name="colorOnSurface">@color/chipBgColorSelected</item>
+    </style>
+
+    <style name="TextAppearance.App.BodyMedium" parent="TextAppearance.Material3.BodyMedium">
+        <item name="fontFamily">@font/product_sans_regular</item>
+        <item name="android:fontFamily">@font/product_sans_regular</item>
+    </style>
+
+    <style name="ShapeAppearance.App.SmallComponent" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">4dp</item>
     </style>
 </resources>

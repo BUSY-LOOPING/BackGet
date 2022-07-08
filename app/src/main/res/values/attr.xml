@@ -2,6 +2,14 @@
 <resources>
     <declare-styleable name="LoadingScreen">
         <attr name="text" format="string" />
-        <attr name="equiSize" format="boolean"/>
+        <attr name="equiSize" format="boolean" />
     </declare-styleable>
+
+
+    <declare-styleable name="SpannedGridLayoutManager">
+        <attr name="android:orientation" />
+        <attr name="spanCount" />
+        <attr name="aspectRatio" format="string" />
+    </declare-styleable>
+
 </resources>
